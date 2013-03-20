@@ -19,20 +19,20 @@
 		<li onclick="add(7)">7</li>
 		<li onclick="add(8)">8</li>
 		<li onclick="add(9)">9</li>
-		<li class="gray">＋</li>
+		<li class="gray" onclick="setOper('+')">＋</li>
 		<li onclick="add(4)">4</li>
 		<li onclick="add(5)">5</li>
 		<li onclick="add(6)">6</li>
-		<li class="gray">－</li>
+		<li class="gray" onclick="setOper('-')">－</li>
 		<li onclick="add(1)">1</li>
 		<li onclick="add(2)">2</li>
 		<li onclick="add(3)">3</li>
-		<li class="gray">×</li>
+		<li class="gray" onclick="setOper('*')">×</li>
 		<li onclick="add(0)">0</li>
-		<li>·</li>
-		<li>＝</li>
-		<li class="gray">÷</li>
-		<li id="clear" onclick="calc_cleartext()">清空</li>
+		<li onclick="addPoint()">·</li>
+		<li onclick="count()">＝</li>
+		<li class="gray" onclick="setOper('/')">÷</li>
+		<li id="clear" onclick="clearText()">清空</li>
 	</ul>
 </div>
 </body>
