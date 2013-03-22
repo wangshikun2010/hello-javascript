@@ -19,7 +19,7 @@
 		var displayMessage_id = document.getElementById('displayMessage');
 		removeChildren(displayMessage_id);
 		var p = document.createElement('p');
-		p.innerHTML = s;
+		p.innerHTML = s;	
 		displayMessage_id.appendChild(p);
 	}
 
@@ -44,6 +44,12 @@
 			case '文档链接颜色':
 			message(document.linkColor);
 			break;
+			case '文档链接数量':
+			message(document.links.length);
+			break;
+			case '文档a标签数量':
+			message(document.anchors.length);
+			break;
 		}
 	}
 
@@ -55,6 +61,7 @@
 </script>
 </head>
 <body>
+	<a href="http://baike.baidu.com/view/409486.htm"></a>
 	<p>获取文档信息</p>
 	<form action="" name="dis">
 		<select name="display" id="display">
@@ -64,6 +71,8 @@
 			<option value="文档背景颜色">文档背景颜色</option>
 			<option value="文档字体颜色">文档字体颜色</option>
 			<option value="文档链接颜色">文档链接颜色</option>
+			<option value="文档链接数量">文档链接数量</option>
+			<option value="文档a标签数量">文档a标签数量</option>
 		</select>
 	</form>
 	<div id="displayMessage"></div>

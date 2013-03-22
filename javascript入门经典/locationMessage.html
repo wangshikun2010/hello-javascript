@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>获取当前链接信息</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	function removeChildren(parentnode) {
+		var childs = parentnode.childNodes;
+		for (var i=childs.length-1; i>=0; i--) {
+			parentnode.removeChild(childs[i]);
+		}
+	}
+
+	function message(s) {
+		var displayMessage_id = document.getElementById('displayMessage');
+		removeChildren(displayMessage_id);
+		var p = document.createElement('p');
+		p.innerHTML = s;	
+		displayMessage_id.appendChild(p);
+	}
+
+	function display_Message() {
+		var select_value = document.getElementById('display').options[document.getElementById('display').selectedIndex].text;
+		switch(select_value) {
+			case '网址协议部分':
+			message(location.protocol);
+			break;
+			case '主机名':
+			message(location.hostname);
+			break;
+			case '端口号':
+			message(location.port);
+			break;
+			case '文件名':
+			message(location.pathname);
+			break;
+			case '查询部分':
+			message(location.search);
+			break;
+			case 'anchor名称':
+			message(location.hash);
+			break;
+		}
+	}
+
+	window.onload = function() {
+		document.getElementById('display').onchange = function() {
+			display_Message();
+		}
+
+		document.dis.reload.onclick = function() {
+			window.location.reload();
+		}
+
+		document.dis.replace.onclick = function() {
+			var news = window.confirm('are you sure you want to jump this!')
+			if (news == true) {
+				window.location.replace('http://www.baidu.com');
+			}
+		}
+	}
+
+</script>
+</head>
+<body>
+	<p>获取当前链接信息</p>
+	<form action="" name="dis">
+		<select name="display" id="display">
+			<option value="网址协议部分" selected="selected">网址协议部分</option>
+			<option value="主机名">主机名</option>
+			<option value="端口号">端口号</option>
+			<option value="文件名">文件名</option>
+			<option value="查询部分">查询部分</option>
+			<option value="anchor名称">anchor名称</option>
+		</select>
+		<input type="button" name="reload" value="刷新页面"/>
+		<input type="button" name="replace" value="载入另一页面"/>
+	</form>
+	<div id="displayMessage"></div>
+</body>
+</html>
