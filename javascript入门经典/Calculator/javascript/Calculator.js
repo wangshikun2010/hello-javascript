@@ -29,58 +29,58 @@ function add(number) {
 
 function li_event() {
 	for (var i=0; i<scores.length; i++) {
-		switch(scores[i].innerHTML) {
+		switch(scores[i].innerText) {
 			case '1':
-			scores[i].addEventListener('click',function() {add('1');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('1');},false);
+				break;
 			case '2':
-			scores[i].addEventListener('click',function() {add('2');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('2');},false);
+				break;
 			case '3':
-			scores[i].addEventListener('click',function() {add('3');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('3');},false);
+				break;
 			case '4':
-			scores[i].addEventListener('click',function() {add('4');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('4');},false);
+				break;
 			case '5':
-			scores[i].addEventListener('click',function() {add('5');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('5');},false);
+				break;
 			case '6':
-			scores[i].addEventListener('click',function() {add('6');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('6');},false);
+				break;
 			case '7':
-			scores[i].addEventListener('click',function() {add('7');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('7');},false);
+				break;
 			case '8':
-			scores[i].addEventListener('click',function() {add('8');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('8');},false);
+				break;
 			case '9':
-			scores[i].addEventListener('click',function() {add('9');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('9');},false);
+				break;
 			case '0':
-			scores[i].addEventListener('click',function() {add('0');},false);
-			break;
+				scores[i].addEventListener('click',function() {add('0');},false);
+				break;
 			case '＋':
-			scores[i].addEventListener('click',function() {setOper('+');},false);
-			break;
+				scores[i].addEventListener('click',function() {setOper('+');},false);
+				break;
 			case '－':
-			scores[i].addEventListener('click',function() {setOper('-');},false);
-			break;
+				scores[i].addEventListener('click',function() {setOper('-');},false);
+				break;
 			case '×':
-			scores[i].addEventListener('click',function() {setOper('*');},false);
-			break;
+				scores[i].addEventListener('click',function() {setOper('*');},false);
+				break;
 			case '÷':
-			scores[i].addEventListener('click',function() {setOper('/');},false);
-			break;
+				scores[i].addEventListener('click',function() {setOper('/');},false);
+				break;
 			case '.':
-			scores[i].addEventListener('click',function() {addPoint();},false);
-			break;
+				scores[i].addEventListener('click',function() {addPoint();},false);
+				break;
 			case '=':
-			scores[i].addEventListener('click',function() {count();},false);
-			break;
+				scores[i].addEventListener('click',function() {count();},false);
+				break;
 			case '清空':
-			scores[i].addEventListener('click',function() {clearText();},false);
-			break;
+				scores[i].addEventListener('click',function() {clearText();},false);
+				break;
 		}
 	}
 }
@@ -106,21 +106,24 @@ function setOper(oper) {
 //计算结果
 function count() {
 	if (operator != "isempty") {
+		var number1 = parseFloat(num1);
+		var number2 = parseFloat(calc_text.value);
 		switch(operator) {
 			case "+":
-			num1 = parseFloat(num1) + parseFloat(calc_text.value);
-			break;
+				result = number1 + number2;
+				break;
 			case "-":
-			num1 = parseFloat(num1) - parseFloat(calc_text.value);
-			break;
+				result = number1 - number2;
+				break;
 			case "*":
-			num1 = parseFloat(num1) * parseFloat(calc_text.value);
-			break;
+				result = number1 * number2;
+				break;
 			case "/":
-			num1 = parseFloat(num1) / parseFloat(calc_text.value);
-			break;
+				result = number1 / number2;
+				break;
 		}
-		calc_text.value = num1;
+		console.log('' + number1 + operator + number2 + '=' + result)
+		calc_text.value = result;
 	}
 	operator = "isempty";
 }
