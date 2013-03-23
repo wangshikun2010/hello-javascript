@@ -78,7 +78,7 @@ function li_event() {
 			case '=':
 				scores[i].addEventListener('click',function() {count();},false);
 				break;
-			case '清空':
+			case 'AC':
 				scores[i].addEventListener('click',function() {clearText();},false);
 				break;
 		}

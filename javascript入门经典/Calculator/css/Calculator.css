@@ -1,6 +1,6 @@
 #calculotor {
-	width: 240px;
-	height: 400px;
+	width: 375px;
+	height: 500px;
 	border: 2px solid #333333;
 	margin: 20px auto auto 20px;
 	background-image: url(../images/Capture.PNG);
@@ -12,6 +12,9 @@
 #calc_title {
 	font-weight: bold;
 	margin-bottom: 10px;
+	font-size: 25px;
+	color: #F9CC21;
+	margin: -5px 0 5px;
 }
 
 #calc_text {
@@ -34,22 +37,19 @@ ul {
 	border-radius: 5px;
 }
 
-/*.gray {
-	background: #7E868C;
-}*/
-
 li {
 	position: relative;
 	display: inline-table;
-	width: 15px;
+	width: 63px;
 	height: 20px;
-	padding: 5px 15px 3px;
-	margin: 2px;
+	padding: 5px 0px 3px;
+	margin: 8px 1px;
 	border: 2px solid #ccc;
 	-webkit-border-radius: 15px;
 	-moz-border-radius: 15px;
-	font-family: Lucida Sans, Helvetica, sans-serif;
+	font-family: Segoe Print Bold, Lucida Sans, Helvetica, sans-serif;
 	font-weight: 800;
+	font-size: 18px;
 	color: #FFFFFF;
 	text-shadow: rgba(10, 10, 10, 0.5) 1px 2px 2px;
 	text-align: center;
@@ -69,4 +69,27 @@ li {
 
 li:hover {
 	cursor: pointer;
+	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 10px;
+	-moz-box-shadow: rgba(66, 140, 240, 0.5) 0px 10px 10px;
+}
+
+.Auxiliary_button {
+	width: 51px;
+}
+
+#cal_shift {
+	background: #E9BE1F;
+	color: #000000;
+}
+
+.gray {
+	background: #A7A7A7;
+}
+
+.red {
+	background: #FF2424;
+}
+
+.yellow {
+	color: #F9CC21;
 }
