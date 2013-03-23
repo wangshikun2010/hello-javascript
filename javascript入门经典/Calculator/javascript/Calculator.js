@@ -2,9 +2,13 @@ var oper_states; //操作状态
 var operator; //操作符
 var num1; //第一个数
 var scores = [];
+var storage; //储存数据标志变量
+var old_operator;
+var num2;
 
 //设置开始状态
 window.onload = function setStartState() {
+	storage = false;
 	oper_states = false;
 	operator = "isempty";
 	num1 = 0;
@@ -15,14 +19,19 @@ window.onload = function setStartState() {
 
 //添加数字
 function add(number) {
-	if (oper_states) {
+	if (storage == true) {
 		calc_text.value = number;
-		oper_states = false;
+		storage = false;
 	} else {
-		if (calc_text.value == "0") {
+		if (oper_states == true) {
 			calc_text.value = number;
+			oper_states = false;
 		} else {
-			calc_text.value += number;
+			if (calc_text.value == "0") {
+				calc_text.value = number;
+			} else {
+				calc_text.value += number;
+			}
 		}
 	}
 }
@@ -106,8 +115,10 @@ function setOper(oper) {
 //计算结果
 function count() {
 	if (operator != "isempty") {
+		old_operator = operator;
 		var number1 = parseFloat(num1);
 		var number2 = parseFloat(calc_text.value);
+		num2 = number2;
 		switch(operator) {
 			case "+":
 				result = number1 + number2;
@@ -122,10 +133,28 @@ function count() {
 				result = number1 / number2;
 				break;
 		}
-		console.log('' + number1 + operator + number2 + '=' + result)
+		console.log('' + number1 + operator + number2 + '=' + result);
 		calc_text.value = result;
+		operator = "isempty";
+		storage = true;
+	} else {
+		if (storage == true) {
+			switch(old_operator) {
+				case "+":
+					calc_text.value = (calc_text.value) + (num2); 
+					break;
+				case "-":
+					calc_text.value = (calc_text.value) - (num2); 
+					break;
+				case "*":
+					calc_text.value = (calc_text.value) * (num2); 
+					break;
+				case "/":
+					calc_text.value = (calc_text.value) / (num2); 
+					break;
+			}
+		}
 	}
-	operator = "isempty";
 }
 
 //清空数据

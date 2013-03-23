@@ -63,17 +63,15 @@ li {
 	border-right-color: #5890bf;
 	border-bottom-color: #4f93ca;
 	border-left-color: #768fa5;
-	-webkit-box-shadow: rgba(66, 140, 240, 0.5) 0px 10px 16px;
-	-moz-box-shadow: rgba(66, 140, 240, 0.5) 0px 10px 16px; /* FF 3.5+ */
+	box-shadow: rgba(66, 140, 240, 0.5) 0px 3px 3px;
 }
 
 li:hover {
 	cursor: pointer;
-	-webkit-box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 10px;
-	-moz-box-shadow: rgba(66, 140, 240, 0.5) 0px 10px 10px;
+	box-shadow: 0px 5px 5px #3272B2;
 }
 
-.Auxiliary_button {
+.auxiliary_button {
 	width: 51px;
 }
 
