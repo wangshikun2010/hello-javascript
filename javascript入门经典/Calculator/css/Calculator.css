@@ -1,6 +1,6 @@
 #calculotor {
 	width: 375px;
-	height: 500px;
+	height: 520px;
 	border: 2px solid #333333;
 	margin: 20px auto auto 20px;
 	background-image: url(../images/Capture.PNG);
@@ -17,14 +17,32 @@
 	margin: -5px 0 5px;
 }
 
-#calc_text {
+#calc_inner {
+	position: relative;
 	width: 99%;
-	height: 30px;
-	outline: none;
+	height: 55px;
 	font-size: 30px;
+	font-weight: bold;
 	color: #272822;
+	border: 2px solid #EEEEEE;
 	border-radius: 5px;
+	background: #FFFFFF;
 	-webkit-user-select: none;
+}
+
+#calc_inner #calc_inner_number {
+	height: 35px;
+	margin: 18px 0 0;
+}
+
+#calc_inner #calc_inner_operator {
+	position: absolute;
+	right: 0px;
+	top: 0px;
+	width: 30px;
+	height: 16px;
+	font-size: 18px;
+	color: #000000;
 }
 
 ul {

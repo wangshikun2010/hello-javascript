@@ -1,42 +1,44 @@
 var oper_states; //操作状态
 var operator; //操作符
 var num1; //第一个数
+var num2; //第二个数
 var scores = [];
 var storage; //储存数据标志变量
 var old_operator;
-var num2;
 
 //设置开始状态
 window.onload = function setStartState() {
-	storage = false;
 	oper_states = false;
 	operator = "isempty";
 	num1 = 0;
-	var calc_text = document.cal.calc_text;
+	storage = false;
+	var calc_inner_number = document.getElementById('calc_inner_number');
+	var calc_inner_operator = document.getElementById('calc_inner_operator');
+	calc_inner_number.innerText = '0';
 	scores = document.getElementsByTagName('li');
-	li_event();
+	add_li_event();
 }
 
 //添加数字
 function add(number) {
 	if (storage == true) {
-		calc_text.value = number;
+		calc_inner_number.innerText = number;
 		storage = false;
 	} else {
 		if (oper_states == true) {
-			calc_text.value = number;
+			calc_inner_number.innerText = number;
 			oper_states = false;
 		} else {
-			if (calc_text.value == "0") {
-				calc_text.value = number;
+			if (calc_inner_number.innerText == "0") {
+				calc_inner_number.innerText = number;
 			} else {
-				calc_text.value += number;
+				calc_inner_number.innerText += number;
 			}
 		}
 	}
 }
 
-function li_event() {
+function add_li_event() {
 	for (var i=0; i<scores.length; i++) {
 		switch(scores[i].innerText) {
 			case '1':
@@ -70,16 +72,16 @@ function li_event() {
 				scores[i].addEventListener('click',function() {add('0');},false);
 				break;
 			case '＋':
-				scores[i].addEventListener('click',function() {setOper('+');},false);
+				scores[i].addEventListener('click',function() {setOper('＋');},false);
 				break;
 			case '－':
-				scores[i].addEventListener('click',function() {setOper('-');},false);
+				scores[i].addEventListener('click',function() {setOper('－');},false);
 				break;
 			case '×':
-				scores[i].addEventListener('click',function() {setOper('*');},false);
+				scores[i].addEventListener('click',function() {setOper('×');},false);
 				break;
 			case '÷':
-				scores[i].addEventListener('click',function() {setOper('/');},false);
+				scores[i].addEventListener('click',function() {setOper('÷');},false);
 				break;
 			case '.':
 				scores[i].addEventListener('click',function() {addPoint();},false);
@@ -96,15 +98,16 @@ function li_event() {
 
 //添加小数点
 function addPoint() {
-	calc_text.value += ".";
+	calc_inner_number.innerText += ".";
 }
 
 //操作符
 function setOper(oper) {
 	oper_states = true;
 	if (operator == "isempty") {
-		num1 = 0 + calc_text.value;
+		num1 = 0 + calc_inner_number.innerText;
 		operator = oper;
+		calc_inner_operator.innerText = oper;
 	} else {
 		oper = oper.charAt(oper.length - 1);
 		operator = oper;
@@ -117,48 +120,57 @@ function count() {
 	if (operator != "isempty") {
 		old_operator = operator;
 		var number1 = parseFloat(num1);
-		var number2 = parseFloat(calc_text.value);
+		if (storage == true) {
+			var number2 = num2;
+		} else {
+			var number2 = parseFloat(calc_inner_number.innerText);
+		}
 		num2 = number2;
 		switch(operator) {
-			case "+":
+			case "＋":
 				result = number1 + number2;
 				break;
-			case "-":
+			case "－":
 				result = number1 - number2;
 				break;
-			case "*":
+			case "×":
 				result = number1 * number2;
 				break;
-			case "/":
+			case "÷":
 				result = number1 / number2;
 				break;
 		}
+		calc_inner_operator.innerText = '';
+		num1 = result;
 		console.log('' + number1 + operator + number2 + '=' + result);
-		calc_text.value = result;
+		calc_inner_number.innerText = result;
 		operator = "isempty";
 		storage = true;
 	} else {
 		if (storage == true) {
 			switch(old_operator) {
-				case "+":
-					calc_text.value = (calc_text.value) + (num2); 
+				case "＋":
+					result = (num1) + (num2);
 					break;
-				case "-":
-					calc_text.value = (calc_text.value) - (num2); 
+				case "－":
+					result = (num1) - (num2);
 					break;
-				case "*":
-					calc_text.value = (calc_text.value) * (num2); 
+				case "×":
+					result = (num1) * (num2);
 					break;
-				case "/":
-					calc_text.value = (calc_text.value) / (num2); 
+				case "÷":
+					result = (num1) / (num2);
 					break;
 			}
 		}
+		console.log('' + num1 + old_operator + num2 + '=' + result);
+		calc_inner_number.innerText = result;
+		num1 = result;
 	}
 }
 
 //清空数据
 function clearText() {
-	calc_text.value = "0";
+	calc_inner_number.innerText = "0";
 	operator = "isempty";
 }
