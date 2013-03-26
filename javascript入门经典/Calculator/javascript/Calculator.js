@@ -5,6 +5,7 @@ var num2; //第二个数
 var buttons = [];
 var storage; //储存数据标志变量
 var old_operator;
+var localvalue;
 
 /**
  * 设置开始状态
@@ -26,74 +27,94 @@ window.onload = function setStartState() {
 function bindButtonHandlers() {
 	buttons = document.getElementsByTagName('li');
 	for (var i=0; i<buttons.length; i++) {
-		switch(buttons[i].innerText) {
+		var text = buttons[i].innerText;
+		var buttonHandler = function () {};
+		switch(text) {
 			case '1':
-				buttons[i].addEventListener('click',function() {addNumber('1');},false);
-				break;
 			case '2':
-				buttons[i].addEventListener('click',function() {addNumber('2');},false);
-				break;
 			case '3':
-				buttons[i].addEventListener('click',function() {addNumber('3');},false);
-				break;
 			case '4':
-				buttons[i].addEventListener('click',function() {addNumber('4');},false);
-				break;
 			case '5':
-				buttons[i].addEventListener('click',function() {addNumber('5');},false);
-				break;
 			case '6':
-				buttons[i].addEventListener('click',function() {addNumber('6');},false);
-				break;
 			case '7':
-				buttons[i].addEventListener('click',function() {addNumber('7');},false);
-				break;
 			case '8':
-				buttons[i].addEventListener('click',function() {addNumber('8');},false);
-				break;
 			case '9':
-				buttons[i].addEventListener('click',function() {addNumber('9');},false);
-				break;
 			case '0':
-				buttons[i].addEventListener('click',function() {addNumber('0');},false);
+				buttonHandler = createNumberButtonHandler(text);
 				break;
 			case '＋':
-				buttons[i].addEventListener('click',function() {setOperator('＋');},false);
-				break;
 			case '－':
-				buttons[i].addEventListener('click',function() {setOperator('－');},false);
-				break;
 			case '×':
-				buttons[i].addEventListener('click',function() {setOperator('×');},false);
-				break;
 			case '÷':
-				buttons[i].addEventListener('click',function() {setOperator('÷');},false);
+				buttonHandler = createOperatorButtonHandler(text);
 				break;
 			case '.':
-				buttons[i].addEventListener('click',function() {addPoint();},false);
+				buttonHandler = addPoint;
 				break;
 			case '=':
-				buttons[i].addEventListener('click',function() {getResult();},false);
+				buttonHandler = getResult;
 				break;
 			case 'AC':
-				buttons[i].addEventListener('click',function() {clearResult();},false);
+				buttonHandler = clearResult;
 				break;
 			case 'DEL':
-				buttons[i].addEventListener('click',function() {deleteNumber();},false);
+				buttonHandler = deleteNumber;
 				break;
 			case '+/-':
-				buttons[i].addEventListener('click',function() {changeNumber();},false);
+				buttonHandler = changeNumber;
 				break;
 			case 'sin':
-				buttons[i].addEventListener('click',function() {mathFun('sin');},false);
-				break;
 			case 'cos':
-				buttons[i].addEventListener('click',function() {mathFun('cos');},false);
-				break;
 			case 'tan':
-				buttons[i].addEventListener('click',function() {mathFun('tan');},false);
+			case 'EXP':
+			case 'log':
+			case '%':
+				buttonHandler = createMathFunctionButtonHandler(text);
 				break;
+			case 'MS':
+			case 'MR':
+			case 'M＋':
+				buttonHandler = createValueButtonHandler(text);
+				break;
+
 		}
+		buttons[i].addEventListener('click',buttonHandler,false);
+	}
+}
+
+/**
+* 创建1个数字按钮的回调函数
+*/
+function createNumberButtonHandler(number) {
+	return function() {
+		addNumber(number);
+	}
+}
+
+/**
+* 创建1个运算符按钮的回调函数
+*/
+function createOperatorButtonHandler(operator) {
+	return function() {
+		setOperator(operator);
+	}
+}
+
+/**
+* 创建1个数学函数按钮的回调函数
+*/
+function createMathFunctionButtonHandler(mathFunction) {
+	return function() {
+		mathFun(mathFunction);
+	}
+}
+
+/**
+* 创建1个储存数值按钮的回调函数
+*/
+function createValueButtonHandler(value) {
+	return function() {
+		localValue(value);
 	}
 }
 
@@ -118,12 +139,17 @@ function addNumber(number) {
 	}
 }
 
-
 /**
  * 添加小数点
  */
 function addPoint() {
-	calc_inner_number.innerText += ".";
+	if ((calc_inner_number.innerText).lastIndexOf('.') == -1) {
+		console.log('按下了点');
+		calc_inner_number.innerText += ".";
+	} else {
+		console.log('按下点没用');
+		return false;
+	}
 }
 
 /**
@@ -206,6 +232,8 @@ function getResult() {
 function clearResult() {
 	calc_inner_number.innerText = "0";
 	operator = "isempty";
+	storage = false;
+	isOperatorInputed = false;
 }
 
 /**
@@ -233,14 +261,53 @@ function changeNumber() {
 function mathFun(func) {
 	switch (func) {
 		case 'sin':
-			calc_inner_number.innerText = Math.sin(calc_inner_number.innerText);
+			calc_inner_number.innerText = Math.sin((calc_inner_number.innerText) * Math.PI/180);
 			break;
 		case 'cos':
-			calc_inner_number.innerText = Math.cos(calc_inner_number.innerText);
+			calc_inner_number.innerText = Math.cos((calc_inner_number.innerText) * Math.PI/180);
 			break;
 		case 'tan':
-			calc_inner_number.innerText = Math.tan(calc_inner_number.innerText);
+			calc_inner_number.innerText = Math.tan((calc_inner_number.innerText) * Math.PI/180);
+			break;
+		case 'EXP':
+			calc_inner_number.innerText = Math.exp(calc_inner_number.innerText);
+			break;
+		case 'log':
+			calc_inner_number.innerText = Math.log(calc_inner_number.innerText);
+			break;
+		case '%':
+			calc_inner_number.innerText = parseFloat(calc_inner_number.innerText) / 100;
 			break;
 	}
+	calc_inner_number.innerText = Math.round((calc_inner_number.innerText) * 10000) / 10000;
 	storage = true;
 }
+
+/**
+ * 存储/显示当前值
+ */
+function localValue(key) {
+	switch (key) {
+		case 'MS':
+			if (calc_inner_number.innerText == '0') {
+				console.log('没有存储数据');
+			} else {
+				localvalue = calc_inner_number.innerText;
+				console.log('存储数据成功');
+			}
+			break;
+		case 'MR':
+			if (localvalue) {
+				calc_inner_number.innerText = localvalue;
+				console.log('显示存储数据');
+			}
+			break;
+		case 'M＋':
+			if (localvalue) {
+				calc_inner_number.innerText = parseFloat(localvalue) + parseFloat(calc_inner_number.innerText);
+				console.log('显示存储数据加上当前值的和');
+			}
+			break;
+	}
+}
+
