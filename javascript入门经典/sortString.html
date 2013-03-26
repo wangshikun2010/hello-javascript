@@ -10,25 +10,11 @@
 <script type="text/javascript">
 	var scores = [];
 	var newScores = [];
-
-	window.onload = function() {
-		document.getElementById('sort_string').onchange = function() {
-			judgeMessage();
-		}
-
-		document.getElementById('add_string').onclick = function() {
-			var text  = document.sort.input_string.value;
-
-			if (text == '') {
-				message('请输入内容!');
-			} else {
-				scores.push(text);
-				console.log(scores);
-				judgeMessage();
-			}
-			document.sort.input_string.value = '';
-		}
-	}
+	var sort_string;
+	var add_string;
+	var displayMessage_id;
+	var sort_type;
+	var isnumber;
 
 	/**
 	 * 删除父节点下的所有子节点
@@ -41,21 +27,53 @@
 	}
 
 	/**
+	 * 判断是否为数字
+	 */
+	function isNumber(str) {
+		for (var i=0; i<str.length; i++) {
+			var oneChar = str.substring(i, i+1);
+			if (oneChar < "0" || oneChar > "9") {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	window.onload = function() {
+		sort_string = document.getElementById('sort_string');
+		add_string = document.getElementById('add_string');
+		displayMessage_id = document.getElementById('displayMessage');
+		sort_type = document.getElementById('sort_type');
+
+		add_string.onclick = function() {
+			var text = document.sort.input_string.value;
+
+			if (text == '') {
+				alert('请输入内容!');
+			} else {
+				scores.push(text);
+				console.log(scores);
+				judgeSortOrder();
+			}
+			document.sort.input_string.value = '';
+		}
+	}
+
+	/**
 	 * 显示信息
 	 */
 	function message(string) {
-		var displayMessage_id = document.getElementById('displayMessage');
-		removeChildren(displayMessage_id);
-		var p = document.createElement('p');
-		p.innerHTML = string;
-		displayMessage_id.appendChild(p);
+		displayMessage_id.value = '';
+		for (var i=0; i<string.length; i++) {
+			displayMessage_id.value += string[i] + '\n';
+		}
 	}
 
 	/**
 	 * 判断是顺序还是逆序
 	 */
-	function judgeMessage() {
-		var select_value = document.getElementById('sort_string').options[document.getElementById('sort_string').selectedIndex].text;
+	function judgeSortOrder() {
+		var select_value = sort_string.options[sort_string.selectedIndex].text;
 		switch(select_value) {
 			case '顺序':
 				order();
@@ -66,11 +84,26 @@
 		}
 	}
 
+	// /**
+	//  * 判断要排序字符串的类型
+	//  */
+	// function stringSortType() {
+	// 	var select_value = sort_type.options[sort_type.selectedIndex].text;
+	// 	switch(select_value) {
+	// 		case '数字排序':
+	// 			sortNumber();
+	// 			break;
+	// 		case '字母排序':
+	// 			sortAlphabet();
+	// 			break;
+	// 	}
+	// }
+
 	/**
 	 * 顺序
 	 */
 	function order() {
-		newScores = scores.sort();
+		newScores = scores.sort(sortNumber);
 		message(newScores);
  	}
 
@@ -78,14 +111,26 @@
  	 * 逆序
  	 */
 	function reverseOrder() {
-
+		scores.sort(sortNumber);
+		for (var i=0; i<scores.length; i++) {
+			for (var j=scores.length; j>=0; j--) {
+				newScores[i++] = scores[j--];
+			}
+		}
+		message(newScores);
 	}
 
 	/**
 	 * 数字排序
 	 */
 	function sortNumber(a,b) {
-		return a - b;
+		return a.localeCompare(b);
+	}
+
+	/**
+	 *  字母排序
+	 */
+	function sortAlphabet() {
 	}
 
 </script>
@@ -95,11 +140,17 @@
 	<form action="" name="sort">
 		<input type="text" name="input_string" id="input_string">
 		<input type="button" name="add_string" id="add_string" value="add">
+
 		<select name="sort_string" id="sort_string">
-			<option value="顺序" selected="selected">顺序</option>
+			<option value="顺序" >顺序</option>
 			<option value="倒序">倒序</option>
 		</select>
+
+		<!-- <select name="sort_type" id="sort_type">
+			<option value="数字排序" >数字排序</option>
+			<option value="字母排序">字母排序</option>
+		</select> -->
 	</form>
-	<div id="displayMessage"></div>
+	<textarea id="displayMessage" cols="60" rows="10"></textarea>
 </body>
 </html>
