@@ -21,9 +21,10 @@ window.onload = function setStartState() {
 	ndDisplay = document.getElementById('calc_inner_number');
 	ndOperator = document.getElementById('calc_inner_operator');
 	ndAudio = document.getElementById('audio');
+	ndSound = document.getElementById('sound');
+	ndSound.addEventListener('click',function() {changeSoundMode();},false);
 	ndDisplay.innerText = '0';
 	bindButtonHandlers();
-
 }
 
 /**
@@ -127,8 +128,10 @@ function createValueButtonHandler(value) {
  * 添加数字
  */
 function addNumber(number) {
+	var ndDisplayLength = ndDisplay.innerText.length;
+	
 	if (storage == true) {
-		calc_inner_number.innerText = number;
+		ndDisplay.innerText = number;
 		storage = false;
 	} else {
 		if (isOperatorInputed == true) {
@@ -138,10 +141,13 @@ function addNumber(number) {
 			if (ndDisplay.innerText == "0") {
 				ndDisplay.innerText = number;
 			} else {
-				ndDisplay.innerText += number;
+				if (ndDisplayLength < 12) {
+					ndDisplay.innerText += number;
+				}
 			}
 		}
 	}
+
 	playSound('./sound/' + number + '.mp3');
 }
 
@@ -194,61 +200,65 @@ function setOperator(oper) {
  * 计算结果
  */
 function getResult() {
-	playSound('./sound/equal.mp3');
-
-	if (operator != "isempty") {
-		old_operator = operator;
-		var number1 = parseFloat(num1);
-
-		if (storage == true) {
-			var number2 = num2;
-		} else {
-			var number2 = parseFloat(ndDisplay.innerText);
-		}
-		num2 = number2;
-
-		switch(operator) {
-			case "＋":
-				result = number1 + number2;
-				break;
-			case "－":
-				result = number1 - number2;
-				break;
-			case "×":
-				result = number1 * number2;
-				break;
-			case "÷":
-				result = number1 / number2;
-				break;
-		}
-		ndOperator.innerText = '';
-		num1 = result;
-		console.log('' + number1 + operator + number2 + '=' + result);
-		ndDisplay.innerText = result;
-		operator = "isempty";
-		storage = true;
+	if (isOperatorInputed == false && ndDisplay.innerText == 0) {
+		getNumberMedian(0);
 	} else {
-		if (storage == true) {
-			switch(old_operator) {
+
+		if (operator != "isempty") {
+			old_operator = operator;
+			var number1 = parseFloat(num1);
+
+			if (storage == true) {
+				var number2 = num2;
+			} else {
+				var number2 = parseFloat(ndDisplay.innerText);
+			}
+			num2 = number2;
+
+			switch(operator) {
 				case "＋":
-					result = (num1) + (num2);
+					result = number1 + number2;
 					break;
 				case "－":
-					result = (num1) - (num2);
+					result = number1 - number2;
 					break;
 				case "×":
-					result = (num1) * (num2);
+					result = number1 * number2;
 					break;
 				case "÷":
-					result = (num1) / (num2);
+					result = number1 / number2;
 					break;
 			}
+			ndOperator.innerText = '';
+			num1 = result;
+			console.log('' + number1 + operator + number2 + '=' + result);
+			ndDisplay.innerText = result;
+			operator = "isempty";
+			storage = true;
+		} else {
+			if (storage == true) {
+				switch(old_operator) {
+					case "＋":
+						result = (num1) + (num2);
+						break;
+					case "－":
+						result = (num1) - (num2);
+						break;
+					case "×":
+						result = (num1) * (num2);
+						break;
+					case "÷":
+						result = (num1) / (num2);
+						break;
+				}
+			}
+			console.log('' + num1 + old_operator + num2 + '=' + result);
+			ndDisplay.innerText = result;
+			num1 = result;
 		}
-		console.log('' + num1 + old_operator + num2 + '=' + result);
-		ndDisplay.innerText = result;
-		num1 = result;
+
+		getNumberMedian(result);
 	}
-	getNumberMedian(result);
 }
 
 /**
@@ -256,23 +266,16 @@ function getResult() {
  */
 function getNumberMedian(number) {
 	console.log(number);
+	var sequence = [];
 
-	var sequence = getSoundSequence(number);
+	sequence = getSoundSequence(number);
+
 	console.log(sequence);
 
 	sequence.unshift('equal');
 
 	var soundSequence = new SoundSequence(sequence);
 	soundSequence.play();
-}
-
-/**
- * 为string对象添加删除方法
- */
-String.prototype.remove = function(start, length) {
-	var l = this.slice(0, start);
-	var r = this.slice(start+length);
-	return l+r;
 }
 
 /**
@@ -287,17 +290,17 @@ function getSoundSequence(number) {
 	var posSoundMap = {
 		1: null, 	// 个
 		2: 'shi', 	// 十
-		3: 'bai', 	// 十
-		4: 'qian', 	// 十
-		5: 'wan', 	// 十
-		6: 'shi', 	// 十
-		7: 'bai', 	// 十
-		8: 'qian', 	// 十
-		9: 'yi', 	// 十
-		10: 'shi', 	// 十
-		11: 'bai', 	// 十
-		12: 'qian', 	// 十
-		13: 'zhao', 	// 十
+		3: 'bai', 	// 百
+		4: 'qian', 	// 千
+		5: 'wan', 	// 万
+		6: 'shi', 	// 十万
+		7: 'bai', 	// 百万
+		8: 'qian', 	// 千万
+		9: 'yi', 	// 亿
+		10: 'shi', 	// 十亿
+		11: 'bai', 	// 百亿
+		12: 'qian', // 千亿
+		13: 'zhao', // 兆
 	};
 
 	if (number.length > 12) {
@@ -320,9 +323,29 @@ function getSoundSequence(number) {
 
 	var sequence = [];
 	var isLastDigitZero = false;
+	var array1 = [], array2 = [], array3 = [];
 
 	// numPartSounds: [1,bai,2,shi,san,null]
 	var numPartLength = numPart.length;
+	// for (var i=0; i<numPartLength; i++) {
+	// 	var digit = numPart.substr(i,1);
+	// 	if (i>=0 && i<4) {
+	// 		array1.push(digit);
+	// 	} else if (i>=4 && i<8) {
+	// 		array2.push(digit);
+	// 	} else {
+	// 		array3.push(digit);
+	// 	}
+	// }
+	// console.log(array1);
+	// console.log(array2);
+	// console.log(array3);
+	
+	if (numPart === '0') {
+		sequence.push(0);
+		return sequence;
+	}
+
 	for (var i=0; i<numPartLength; i++) {
 		var digit = numPart.substr(i,1);
 		if (parseInt(digit) > 0) {
@@ -501,4 +524,10 @@ SoundSequence.prototype.play = function() {
 			that.play();
 		}
 	}, false);
+}
+
+function changeSoundMode() {
+	var ndSoundBackground = ndSound.getAttribute('background');
+	// ndSound.style.background = 'url(../images/1.jpg) -108.5px -60px';
+	window.alert(ndSoundBackground);
 }
