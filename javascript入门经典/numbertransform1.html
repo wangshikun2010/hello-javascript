@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>把数字转换为大写</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+/**
+ * 把数字转换为大写
+ */
+function numberConversion() {
+	var number = document.getElementById('number').value;
+	var varTransform = document.getElementById('transform');
+	var numPart;
+	var digitPart;
+	var number = number.toString();
+	var digitPos = number.indexOf(".");
+	var sequence = [];
+	var array1 = [], array2 = [], array3 = [];
+
+	//数字位数超过十二位就不读
+	if (number.length > 12) {
+		return false;
+	}
+
+	// number: 123.45
+	// numPart: 123
+	// digitPart: 45
+	if (digitPos == -1) {
+		numPart = number;
+		digitPart = '';
+	} else {
+		numPart = number.substr(0, digitPos);
+		digitPart = number.substr(digitPos + 1, number.length);
+		if (digitPart === '0') {
+			digitPart = '';
+		}
+	}
+
+	if (numPart === '0') {
+		sequence.push('零');
+		varTransform.value = sequence.join('');
+		return;
+	}
+
+	var numPartLength = numPart.length;
+	for (var i=0; i<numPartLength; i++) {
+		var digit = numPart.substr(i,1);
+		if (numPartLength <= 4) {
+			array1.push(digit);
+		} else if (numPartLength > 4 && numPartLength <= 8) {
+			if (i < numPartLength-4) {
+				array2.push(digit);
+			} else {
+				array1.push(digit);
+			}
+		} else if (numPartLength > 8 && numPartLength <= 12) {
+			if (i < numPartLength-8) {
+				array3.push(digit);
+			} else if ((i >= numPartLength-8) && (i < numPartLength-4)) {
+				array2.push(digit);
+			} else {
+				array1.push(digit);
+			}
+		}
+	}
+
+	array3 = numberTransform(array3.join(''));
+	array2 = numberTransform(array2.join(''));
+	array1 = numberTransform(array1.join(''));
+
+	if (array3.length != 0) {
+		array3.push('亿');
+	}
+	if (array2.length != 0) {
+		array2.push('万');
+	}
+	sequence = array3.concat(array2,array1);
+
+	// digitPartSounds: [4,5]
+	if (digitPart) {
+		sequence.push('点');
+		var digitPartLength = digitPart.length;
+		for (var i=0; i<digitPartLength; i++) {
+			var digit = digitPart.substr(i,1);
+			sequence.push(digit);
+		}
+	}
+
+	for (var i=0; i<sequence.length; i++) {
+		switch(sequence[i]) {
+			case '0':
+				sequence[i] = '零';
+				break;
+			case '1':
+				sequence[i] = '壹';
+				break;
+			case '2':
+				sequence[i] = '贰';
+				break;
+			case '3':
+				sequence[i] = '叁';
+				break;
+			case '4':
+				sequence[i] = '肆';
+				break;
+			case '5':
+				sequence[i] = '伍';
+				break;
+			case '6':
+				sequence[i] = '陆';
+				break;
+			case '7':
+				sequence[i] = '柒';
+				break;
+			case '8':
+				sequence[i] = '捌';
+				break;
+			case '9':
+				sequence[i] = '玖';
+				break;
+		}
+	}
+	
+	varTransform.value = sequence.join('');
+}
+
+/**
+ * 获取数字转换的数组
+ */
+function numberTransform(string) {
+	var posSoundMap = {
+		1: null, 	// 个
+		2: '拾', 	// 十
+		3: '佰', 	// 百
+		4: '千', 	// 千
+		5: '万', 	// 万
+		6: '拾', 	// 十万
+		7: '佰', 	// 百万
+		8: '千', 	// 千万
+		9: '亿', 	// 亿
+		10: '拾', 	// 十亿
+		11: '佰', 	// 百亿
+		12: '千', // 千亿
+		13: '兆', // 兆
+	};
+	var isLastZero = false;
+	var stringLength = string.length;
+	var sequence = [];
+
+	// numPartSounds: [1,bai,2,shi,san,null]
+	for (var i=0; i<stringLength; i++) {
+		var digit = string.substr(i,1);
+		if (parseInt(digit) > 0) {
+			isLastZero = false;
+			sequence.push(digit);
+			if (posSoundMap[stringLength - i]) {
+				sequence.push(posSoundMap[stringLength - i]);
+			}
+		} else {
+			// 处理末尾的多个连续0
+			if (parseInt(string.substr(i)) === 0) {
+				break;
+			}
+
+			//处理间隔的0
+			if (isLastZero) {
+				continue;
+			} else {
+				isLastZero = true;
+				sequence.push(digit);
+			}
+		}
+	}
+	return sequence;
+}
+
+window.onload = function() {
+	document.getElementById('button').addEventListener('click',function() {numberConversion();},false);
+}
+</script>
+</head>
+<body>
+	<p><input type="text" name="number" id="number"></p>
+	<p><input type="button" name="button" id="button" value="转换"></p>
+	<p><input type="text" name="transform" id="transform" size="50"></p>
+</body>
+</html>

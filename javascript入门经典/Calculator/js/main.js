@@ -9,11 +9,13 @@ var localvalue;
 var ndDisplay = null;
 var ndOperator = null;
 var audio = null;
+var isPlaySoundInputed; //播放声音状态
 
 /**
  * 设置开始状态
  */
 window.onload = function setStartState() {
+	isPlaySoundInputed = true;
 	isOperatorInputed = false;
 	operator = "isempty";
 	num1 = 0;
@@ -21,6 +23,7 @@ window.onload = function setStartState() {
 	ndDisplay = document.getElementById('calc_inner_number');
 	ndOperator = document.getElementById('calc_inner_operator');
 	ndAudio = document.getElementById('audio');
+	ndCalcSound = document.getElementById('calc_sound');
 	ndSound = document.getElementById('sound');
 	ndSound.addEventListener('click',function() {changeSoundMode();},false);
 	ndDisplay.innerText = '0';
@@ -203,7 +206,6 @@ function getResult() {
 	if (isOperatorInputed == false && ndDisplay.innerText == 0) {
 		getNumberMedian(0);
 	} else {
-
 		if (operator != "isempty") {
 			old_operator = operator;
 			var number1 = parseFloat(num1);
@@ -265,44 +267,32 @@ function getResult() {
  * 获取数字的每位数
  */
 function getNumberMedian(number) {
-	console.log(number);
 	var sequence = [];
 
 	sequence = getSoundSequence(number);
 
-	console.log(sequence);
+	if ((number.toString()).length < 12) {
+		sequence.unshift('equal');
+	}
 
-	sequence.unshift('equal');
-
-	var soundSequence = new SoundSequence(sequence);
-	soundSequence.play();
+	if (isPlaySoundInputed == true) {
+		var soundSequence = new SoundSequence(sequence);
+		soundSequence.play();
+	}
 }
 
 /**
  * 把数字转换为声音序列
  */
 function getSoundSequence(number) {
-	//分离整数与小数
 	var numPart;
 	var digitPart;
 	var number = number.toString();
 	var digitPos = number.indexOf(".");
-	var posSoundMap = {
-		1: null, 	// 个
-		2: 'shi', 	// 十
-		3: 'bai', 	// 百
-		4: 'qian', 	// 千
-		5: 'wan', 	// 万
-		6: 'shi', 	// 十万
-		7: 'bai', 	// 百万
-		8: 'qian', 	// 千万
-		9: 'yi', 	// 亿
-		10: 'shi', 	// 十亿
-		11: 'bai', 	// 百亿
-		12: 'qian', // 千亿
-		13: 'zhao', // 兆
-	};
+	var sequence = [];
+	var array1 = [], array2 = [], array3 = [];
 
+	//数字位数超过十二位就不读
 	if (number.length > 12) {
 		return false;
 	}
@@ -321,59 +311,44 @@ function getSoundSequence(number) {
 		}
 	}
 
-	var sequence = [];
-	var isLastDigitZero = false;
-	var array1 = [], array2 = [], array3 = [];
-
-	// numPartSounds: [1,bai,2,shi,san,null]
-	var numPartLength = numPart.length;
-	// for (var i=0; i<numPartLength; i++) {
-	// 	var digit = numPart.substr(i,1);
-	// 	if (i>=0 && i<4) {
-	// 		array1.push(digit);
-	// 	} else if (i>=4 && i<8) {
-	// 		array2.push(digit);
-	// 	} else {
-	// 		array3.push(digit);
-	// 	}
-	// }
-	// console.log(array1);
-	// console.log(array2);
-	// console.log(array3);
-	
 	if (numPart === '0') {
 		sequence.push(0);
 		return sequence;
 	}
 
+	var numPartLength = numPart.length;
 	for (var i=0; i<numPartLength; i++) {
 		var digit = numPart.substr(i,1);
-		if (parseInt(digit) > 0) {
-			isLastDigitZero = false;
-			sequence.push(digit);
-			if (posSoundMap[numPartLength - i]) {
-				sequence.push(posSoundMap[numPartLength - i]);
-			}
-		} else {
-			// 处理末尾的多个连续0
-			if (parseInt(numPart.substr(i)) === 0) {
-				break;
-			}
-
-			if (isLastDigitZero) {
-				continue;
+		if (numPartLength <= 4) {
+			array1.push(digit);
+		} else if (numPartLength > 4 && numPartLength <= 8) {
+			if (i < numPartLength-4) {
+				array2.push(digit);
 			} else {
-				isLastDigitZero = true;
-				if ((numPartLength - i) >= 5 && (numPartLength - i) < 10) {
-					sequence.push('wan');
-				}
-				if ((numPartLength - i) >= 10) {
-					sequence.push('yi');
-				}
-				sequence.push(digit);
+				array1.push(digit);
+			}
+		} else if (numPartLength > 8 && numPartLength <= 12) {
+			if (i < numPartLength-8) {
+				array3.push(digit);
+			} else if ((i >= numPartLength-8) && (i < numPartLength-4)) {
+				array2.push(digit);
+			} else {
+				array1.push(digit);
 			}
 		}
 	}
+
+	array3 = numberTransform(array3.join(''));
+	array2 = numberTransform(array2.join(''));
+	array1 = numberTransform(array1.join(''));
+
+	if (array3.length != 0) {
+		array3.push('yi');
+	}
+	if (array2.length != 0) {
+		array2.push('wan');
+	}
+	sequence = array3.concat(array2,array1);
 
 	// digitPartSounds: [4,5]
 	if (digitPart) {
@@ -385,6 +360,56 @@ function getSoundSequence(number) {
 		}
 	}
 
+	return sequence;
+}
+
+/**
+ * 获取数字转换的数组
+ */
+function numberTransform(string) {
+	var posSoundMap = {
+		1: null, 	// 个
+		2: 'shi', 	// 十
+		3: 'bai', 	// 百
+		4: 'qian', 	// 千
+		5: 'wan', 	// 万
+		6: 'shi', 	// 十万
+		7: 'bai', 	// 百万
+		8: 'qian', 	// 千万
+		9: 'yi', 	// 亿
+		10: 'shi', 	// 十亿
+		11: 'bai', 	// 百亿
+		12: 'qian', // 千亿
+		13: 'zhao', // 兆
+	};
+	var isLastZero = false;
+	var stringLength = string.length;
+	var sequence = [];
+
+	// numPartSounds: [1,bai,2,shi,san,null]
+	for (var i=0; i<stringLength; i++) {
+		var digit = string.substr(i,1);
+		if (parseInt(digit) > 0) {
+			isLastZero = false;
+			sequence.push(digit);
+			if (posSoundMap[stringLength - i]) {
+				sequence.push(posSoundMap[stringLength - i]);
+			}
+		} else {
+			// 处理末尾的多个连续0
+			if (parseInt(string.substr(i)) === 0) {
+				break;
+			}
+
+			//处理间隔的0
+			if (isLastZero) {
+				continue;
+			} else {
+				isLastZero = true;
+				sequence.push(digit);
+			}
+		}
+	}
 	return sequence;
 }
 
@@ -485,11 +510,13 @@ function localValue(key) {
  * 播放声音
  */
 function  playSound(source) {
-	ndAudio.setAttribute('src', source);
-	ndAudio.setAttribute('autoplay', true);
-	ndAudio.addEventListener('ended', function() {
+	if (isPlaySoundInputed == true) {
+		ndAudio.setAttribute('src', source);
+		ndAudio.setAttribute('autoplay', true);
+		ndAudio.addEventListener('ended', function() {
 		// console.log('sound: ' + source + ' ended!');
-	});
+		});
+	}
 }
 
 /**
@@ -517,7 +544,9 @@ SoundSequence.prototype.play = function() {
 	ndAudio.addEventListener('ended', function() {
 		if (that.currentSoundIndex === that.maxSoundIndex) {
 			// console.log('sound sequence end!');
-			return false;
+			if (isPlaySoundInputed == true) {
+				return false;
+			}
 		} else {
 			that.currentSoundIndex++;
 			ndBody.removeChild(ndAudio);
@@ -527,7 +556,9 @@ SoundSequence.prototype.play = function() {
 }
 
 function changeSoundMode() {
-	var ndSoundBackground = ndSound.getAttribute('background');
-	// ndSound.style.background = 'url(../images/1.jpg) -108.5px -60px';
-	window.alert(ndSoundBackground);
+	if (ndSound.checked) {
+		isPlaySoundInputed = false; //不发声
+	} else {
+		isPlaySoundInputed = true; //发声
+	}
 }
