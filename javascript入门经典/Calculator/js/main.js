@@ -555,6 +555,10 @@ SoundSequence.prototype.play = function() {
 	}, false);
 }
 
+SoundSequence.prototype.stop = function() {
+	ndBody.removeChild(ndAudio);
+}
+
 function changeSoundMode() {
 	if (ndSound.checked) {
 		isPlaySoundInputed = false; //不发声
