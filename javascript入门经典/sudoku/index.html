@@ -8,6 +8,7 @@
 <meta name="keywords" content="">
 <link type="text/css" href="./css/normalize.css" rel="stylesheet">
 <link type="text/css" href="./css/sudoku.css" rel="stylesheet">
+<script type="text/javascript" src="./js/sudoku.js"></script>
 </head>
 <body>
 <div id="sudoku">
@@ -194,12 +195,47 @@
 	</div>
 
 	<div id="control_panel">
-		<p id="block1" class="block">0 : 0 : 0</p>
-		<p id="block2" class="block">easy</p>
-		<p id="block3" class="block">start</p>
+		<p id="sudoku_title">数独<span>SUDOKU</span></p>
+		<hr/>
 		<input type="checkbox" id="sound"/>
 		<label for="sound" id="label_sound" title="music"></label>
+		<p id="block1" class="block">00:00:00</p>
+		<div id="block2" class="block">
+			<p id="diff">游戏难度</p>
+			<p id="sudoku_diff">
+				<input type="radio" name="radio" id="radio1" value="简单" checked="checked" />
+				<label for="radio1">简单</label>
+
+				<input type="radio" name="radio" id="radio2" value="中等" />
+				<label for="radio2">中等</label>
+
+				<input type="radio" name="radio" id="radio3" value="困难" />
+				<label for="radio3">困难</label>
+			</p>
+		</div>
+		<p id="block3" class="block">开始游戏</p>
+		<p class="block button">暂停</p>
+		<p class="block button">全部清空</p>
+		<p class="block button">帮助</p>
+		<p class="block button">游戏规则</p>
 	</div>
 </div>
+<table class="number_ceiltable">
+	<tr>
+		<td>1</td>
+		<td>2</td>
+		<td>3</td>
+	</tr>
+	<tr>
+		<td>4</td>
+		<td>5</td>
+		<td>6</td>
+	</tr>
+	<tr>
+		<td>7</td>
+		<td>8</td>
+		<td>9</td>
+	</tr>
+</table>
 </body>
 </html>
