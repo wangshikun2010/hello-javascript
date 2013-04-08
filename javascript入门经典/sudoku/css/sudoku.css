@@ -1,4 +1,5 @@
 #sudoku {
+	position: relative;
 	width: 800px;
 	height: 510px;
 	margin: 50px auto;
@@ -32,7 +33,6 @@
 }
 
 .ceiltable td {
-	position: relative;
 	border: 1px solid #87C7EC;
 	width: 33%;
 	height: 33%;
@@ -100,7 +100,7 @@ hr {
 }
 
 
-#control_panel #block1 {
+#control_panel #sudoku_time {
 	width: 150px;
 	height: 40px;
 	margin: 10px 0 0 0;
@@ -108,7 +108,7 @@ hr {
 	font-size: 1.8em;
 }
 
-#control_panel #block2 {
+#control_panel #sudoku_difficulty {
 	width: 150px;
 	height: 60px;
 	margin: 20px 0 0 0;
@@ -116,15 +116,15 @@ hr {
 	font-size: 0.8em;
 }
 
-#control_panel #block2 #diff {
+#control_panel #sudoku_difficulty #difficulty_title {
 	margin: 10px 0 0 0;
 }
 
-#control_panel #block2 #sudoku_diff {
+#control_panel #sudoku_difficulty #difficulty {
 	margin: 0;
 }
 
-#control_panel #block3 {
+#control_panel #sudoku_start {
 	width: 150px;
 	height: 35px;
 	margin: 10px 0 0 0;
@@ -193,7 +193,7 @@ hr {
  * 键盘数字样式
  */
 .number_ceiltable {
-	position: absolute;
+	position: relative;
 	left: 0;
 	top: 0;
 	border-collapse: collapse;
@@ -216,4 +216,30 @@ hr {
 .number_ceiltable td:hover {
 	border: 1px solid #FF5400;
 	background: #FFFFFF;
+}
+
+#new_div {
+	position: absolute;
+	z-index: 9999;
+	left: 300px;
+	top: 150px;
+	width: 300px;
+	height: 120px;
+	border-width: 8px;
+	padding: 30px;
+	border-radius: 15px;
+	font-family: Microsoft yahei;
+	font-weight: bold;
+}
+
+#new_div:hover {
+	opacity: 1;
+}
+
+#new_a {
+	display: block;
+	width: 100px;
+	text-align: center;
+	margin: 20px auto 0;
+	padding: 5px 0;
 }

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>模拟对话框</title>
+<style type="text/css">
+	#newDiv {
+		position: absolute;
+		z-index: 9999;
+		left: 0;
+		top: 50px;
+		width: 500px;
+		height: 300px;
+		background: #EFEFEF;
+		border: 1px solid #860001;
+		padding: 5px;
+		border-radius: 5px;
+	}
+</style>
+<script type="text/javascript">
+	function openNewDiv() {
+		// 新激活图层
+		var newDiv = document.createElement("div");
+		newDiv.setAttribute('id', 'newDiv');
+		newDiv.innerHTML = "新激活图层内容";
+		document.body.appendChild(newDiv);
+
+		var newA = document.createElement("a");
+		newA.href = "#";
+		newA.innerHTML = "关闭";
+
+		newA.onclick = function() {
+			document.body.removeChild(newDiv);
+			return false;
+		}
+
+		newDiv.appendChild(newA);
+	}
+
+	window.onload = function() {
+		var alert_div = document.getElementById('alert_div');
+		alert_div.onclick = function() {
+			openNewDiv();
+			return false;
+		}
+	}
+</script>
+</head>
+<body>
+	<a href="#" id="alert_div">激活新层</a>
+</body>
+</html>  
