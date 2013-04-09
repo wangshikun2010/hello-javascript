@@ -3,6 +3,7 @@ var isPlaySoundInputed;
 
 //元素节点名称
 var ndSudoku;
+var ndSudoku_table;
 var ndSudoku_time;
 var ndSudoku_start;
 var ndSudoku_pause;
@@ -15,8 +16,9 @@ var ndLabel_sound;
 
 window.onload = function() {
 	isPlaySoundInputed = true;
-	
+
 	ndSudoku = document.getElementById('sudoku');
+	ndSudoku_table = document.getElementById('sudoku_table');
 	ndSudoku_time = document.getElementById('sudoku_time');
 	ndSudoku_start = document.getElementById('sudoku_start');
 	ndSudoku_pause = document.getElementById('sudoku_pause');
@@ -46,7 +48,7 @@ window.onload = function() {
 		displaySudokuRuler(string1, string2);
 	}
 
-	playSound('./sound/a.mp3');
+	// playSound('./sound/a.mp3');
 	setNumberButton();
 }
 
@@ -77,9 +79,9 @@ function displaySudokuRuler(string1, string2) {
 }
 
 /**
- * 将字符串转换为时分秒格式
+ * 将秒数转换为时分秒格式
  */
-function time_To_hhmmss(number){
+function timeTransform(number) {
 	var hours;
 	var minutes;
 	var seconds;
@@ -117,7 +119,7 @@ function time_To_hhmmss(number){
 var c = 0;
 var time;
 function startTiming() {
-	ndSudoku_time.innerText = time_To_hhmmss(c);
+	ndSudoku_time.innerText = timeTransform(c);
 	c = c + 1;
 	time = setTimeout('startTiming()',1000);
 }
@@ -132,13 +134,19 @@ function stopTime() {
 function setNumberButton() {
 	var ceiltable = document.querySelectorAll('.ceiltable');
 
-	for (var i = 0; i <= ceiltable.length; i++) {
+	for (var i = 0; i < ceiltable.length; i++) {
 		var row = ceiltable[i].rows;
-		for (var j=0; j<ceiltable[i].rows.length; j++) {
-			for (var k=0; k<row[j].cells.length; k++) {
+
+		for (var j = 0; j < row.length; j++) {
+			for (var k = 0; k < row[j].cells.length; k++) {
 				var cell = row[j].cells[k];
 				cell.addEventListener('click', function() {
-					this.innerHTML = '';
+					var number_ceiltable = ndSudoku_table.querySelectorAll('.number_ceiltable');
+					console.log(number_ceiltable.length);
+
+					for (var t=0; t<number_ceiltable.length; t++) {
+						removeChildren(number_ceiltable[i]);
+					}
 					createNumberutton(this);
 				},false);
 			}
@@ -147,33 +155,36 @@ function setNumberButton() {
 }
 
 /**
- * 创建数字按钮
- */
-function createNumberutton(node) {
-	var table = document.createElement('table');
-	var tr1 = document.createElement('tr');
-	var tr2 = document.createElement('tr');
-	var tr3 = document.createElement('tr');
-
-	for (var j=1; j<=9; j++) {
-		if (j <= 3) {
-			var td = document.createElement('td');
-			td.innerHTML = j;
-			tr1.appendChild(td);
-		} else if (j > 3 && j <= 6) {
-			var td = document.createElement('td');
-			td.innerHTML = j;
-			tr2.appendChild(td);
-		} else {
-			var td = document.createElement('td');
-			td.innerHTML = j;
-			tr3.appendChild(td);
-		}
+* 删除父节点下的所有子节点
+*/
+function removeChildren(parentnode) {
+	var childs = parentnode.childNodes;
+	for (var i=0; i<childs.length; i++) {
+		parentnode.removeChild(childs[i]);
 	}
-	table.appendChild(tr1);
-	table.appendChild(tr2);
-	table.appendChild(tr3);
+}
+
+/**
+ * 创建数字按钮table
+ */
+function createNumberutton(node) { 
+	table = document.createElement("table");
 	table.setAttribute('class', 'number_ceiltable');
+	var k = 1;
+
+	for (var i=1; i<4; i++) {
+		var row = document.createElement("tr"); 
+		row.id = i;
+		for (var j=1; j<4; j++) {
+			var cell = document.createElement("td"); 
+			cell.id = i + '_' + j;
+			
+			cell.appendChild(document.createTextNode(k)); 
+			row.appendChild(cell);
+			k = k + 1;
+		}
+		table.appendChild(row);
+	}
 	node.appendChild(table);
 }
 
