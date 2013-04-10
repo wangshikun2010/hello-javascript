@@ -1,6 +1,8 @@
 var isPlaySoundInputed; //播放状态
 var isClick; //点击
-var isAClick;
+var isAClick; //点击确定
+var isCreateTable;
+var isGetnumber;
 
 //元素节点名称
 var ndSudoku;
@@ -19,6 +21,8 @@ window.onload = function() {
 	isPlaySoundInputed = true;
 	isClick = false;
 	isAClick = false;
+	isCreateTable = false;
+	isGetnumber = false;
 
 	ndSudoku = document.getElementById('j-sudoku');
 	ndSudoku_table = document.getElementById('j-sudoku-table');
@@ -158,17 +162,41 @@ function setNumberButton() {
 			for (var k = 0; k < row[j].cells.length; k++) {
 				var cell = row[j].cells[k];
 				cell.addEventListener('click', function() {
-					var ndNumber_ceiltable = ndSudoku_table.querySelectorAll('.number-ceiltable');
-					console.log(ndNumber_ceiltable.length);
+					removeChildrenfunction();
 
-					// for (var t=0; t<ndNumber_ceiltable.length; t++) {
-					// 	removeChildren(ndNumber_ceiltable[i]);
-					// }
-
-					createNumberutton(this);
+					if (isGetnumber == false) {
+						createNumberbutton(this);
+						setTdValue(this);
+					}
 				},false);
 			}
 		}
+	}
+}
+
+/**
+ * 表格点击填值
+ */
+function setTdValue(node) {
+	var table = document.getElementById("j-number-ceiltable");
+	var rows = table.rows;
+	for (var i = 0; i < rows.length; i++) {
+		for (var j = 0; j < rows[i].cells.length; j++) {
+			var cell = rows[i].cells[j];
+			cell.addEventListener('click', function() {
+				node.innerText = this.innerText;
+			},false);
+		}
+	}
+}
+
+/**
+ * 删除指定元素
+ */
+function removeChildrenfunction() {
+	var ndNumber_ceiltable = ndSudoku_table.querySelectorAll('.number-ceiltable');
+	for (var i=0; i<ndNumber_ceiltable.length; i++) {
+		clearAllNode(ndNumber_ceiltable[i]);
 	}
 }
 
@@ -181,13 +209,19 @@ function removeChildren(parentnode) {
 		parentnode.removeChild(childs[i]);
 	}
 }
-
+function clearAllNode(parentNode){
+	while (parentNode.firstChild) {
+		var oldNode = parentNode.removeChild(parentNode.firstChild);
+		oldNode = null;
+	}
+}
 /**
  * 创建数字按钮table
  */
-function createNumberutton(node) { 
+function createNumberbutton(node) {
 	table = document.createElement("table");
 	table.setAttribute('class', 'number-ceiltable');
+	table.setAttribute('id', 'j-number-ceiltable');
 	var k = 1;
 
 	for (var i=1; i<4; i++) {
@@ -205,6 +239,8 @@ function createNumberutton(node) {
 	}
 
 	node.appendChild(table);
+	// isCreateTable = true;
+	// return node;
 }
 
 /**
