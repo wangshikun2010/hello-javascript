@@ -1,5 +1,6 @@
-var startTime;
-var isPlaySoundInputed;
+var isPlaySoundInputed; //播放状态
+var isClick; //点击
+var isAClick;
 
 //元素节点名称
 var ndSudoku;
@@ -16,25 +17,31 @@ var ndLabel_sound;
 
 window.onload = function() {
 	isPlaySoundInputed = true;
+	isClick = false;
+	isAClick = false;
 
-	ndSudoku = document.getElementById('sudoku');
-	ndSudoku_table = document.getElementById('sudoku_table');
-	ndSudoku_time = document.getElementById('sudoku_time');
-	ndSudoku_start = document.getElementById('sudoku_start');
-	ndSudoku_pause = document.getElementById('sudoku_pause');
-	ndSudoku_clear = document.getElementById('sudoku_clear');
-	ndSudoku_help = document.getElementById('sudoku_help');
-	ndSudoku_ruler = document.getElementById('sudoku_ruler');
-	ndAudio = document.getElementById('audio');
-	ndSound = document.getElementById('sound');
-	ndLabel_sound = document.getElementById('label_sound');
+	ndSudoku = document.getElementById('j-sudoku');
+	ndSudoku_table = document.getElementById('j-sudoku-table');
+	ndSudoku_time = document.getElementById('j-sudoku-time');
+	ndSudoku_start = document.getElementById('j-sudoku-start');
+	ndSudoku_pause = document.getElementById('j-sudoku-pause');
+	ndSudoku_clear = document.getElementById('j-sudoku-clear');
+	ndSudoku_help = document.getElementById('j-sudoku-help');
+	ndSudoku_ruler = document.getElementById('j-sudoku-ruler');
+	ndAudio = document.getElementById('j-audio');
+	ndSound = document.getElementById('j-sound');
+	ndLabel_sound = document.getElementById('j-label-sound');
 
 	ndSound.addEventListener('click',function() {changeSoundMode();},false);
 
 	ndSudoku_ruler.onclick = function() {
-		var string1 = "用1至9之间的数字填满空格，一个格子只能填入一个数字,即每个数字在每一行、每一列和每一区只能出现一次";
-		var string2 = "我知道了";
-		displaySudokuRuler(string1, string2);
+		if ((isClick == true && isAClick == true) || isClick == false) {
+			var string1 = "用1至9之间的数字填满空格，一个格子只能填入一个数字,即每个数字在每一行、每一列和每一区只能出现一次";
+			var string2 = "我知道了";
+			displaySudokuRuler(string1, string2);
+		} else if (isClick == true || isAClick == false) {
+			return;
+		}
 	}
 
 	ndSudoku_start.onclick = function() {
@@ -42,10 +49,14 @@ window.onload = function() {
 	}
 
 	ndSudoku_pause.onclick = function() {
-		var string1 = '暂停';
-		var string2 = '继续';
-		stopTime();
-		displaySudokuRuler(string1, string2);
+		if ((isClick == true && isAClick == true) || isClick == false) {
+			var string1 = '暂停';
+			var string2 = '继续';
+			stopTime();
+			displaySudokuRuler(string1, string2);
+		} else if (isClick == true || isAClick == false) {
+			return;
+		}
 	}
 
 	// playSound('./sound/a.mp3');
@@ -56,20 +67,26 @@ window.onload = function() {
  * 显示数独规则
  */
 function displaySudokuRuler(string1, string2) {
+
+	//create a div
 	var newDiv = document.createElement("div");
-	newDiv.setAttribute('id', 'new_div');
+	newDiv.setAttribute('id', 'new-div');
 	newDiv.setAttribute('class', 'block');
 	newDiv.innerText = string1;
 	ndSudoku.appendChild(newDiv);
 
+	//craete a link
 	var newA = document.createElement("a");
 	newA.href = "#";
-	newA.setAttribute('id', 'new_a');
+	newA.setAttribute('id', 'new-a');
 	newA.setAttribute('class', 'block');
 	newA.innerText = string2;
 	newDiv.appendChild(newA);
 
+	isClick = true;
+	isAClick = false;
 	newA.onclick = function() {
+		isAClick = true;
 		if (newA.innerText == '继续') {
 			startTiming();
 		}
@@ -141,12 +158,13 @@ function setNumberButton() {
 			for (var k = 0; k < row[j].cells.length; k++) {
 				var cell = row[j].cells[k];
 				cell.addEventListener('click', function() {
-					var number_ceiltable = ndSudoku_table.querySelectorAll('.number_ceiltable');
-					console.log(number_ceiltable.length);
+					var ndNumber_ceiltable = ndSudoku_table.querySelectorAll('.number-ceiltable');
+					console.log(ndNumber_ceiltable.length);
 
-					for (var t=0; t<number_ceiltable.length; t++) {
-						removeChildren(number_ceiltable[i]);
-					}
+					// for (var t=0; t<ndNumber_ceiltable.length; t++) {
+					// 	removeChildren(ndNumber_ceiltable[i]);
+					// }
+
 					createNumberutton(this);
 				},false);
 			}
@@ -169,7 +187,7 @@ function removeChildren(parentnode) {
  */
 function createNumberutton(node) { 
 	table = document.createElement("table");
-	table.setAttribute('class', 'number_ceiltable');
+	table.setAttribute('class', 'number-ceiltable');
 	var k = 1;
 
 	for (var i=1; i<4; i++) {
@@ -178,13 +196,14 @@ function createNumberutton(node) {
 		for (var j=1; j<4; j++) {
 			var cell = document.createElement("td"); 
 			cell.id = i + '_' + j;
-			
+
 			cell.appendChild(document.createTextNode(k)); 
 			row.appendChild(cell);
 			k = k + 1;
 		}
 		table.appendChild(row);
 	}
+
 	node.appendChild(table);
 }
 

@@ -11,9 +11,9 @@
 <script type="text/javascript" src="./js/sudoku.js"></script>
 </head>
 <body>
-<div id="sudoku">
-	<div id="sudoku_panel">
-		<table id="sudoku_table" cellspacing="1" cellpadding="1">
+<div class="sudoku" id="j-sudoku">
+	<div class="sudoku-panel" id="j-sudoku-panel">
+		<table class="sudoku-table" id="j-sudoku-table">
 			<tr>
 				<td>
 					<table class="ceiltable">
@@ -194,15 +194,15 @@
 		</table>
 	</div>
 
-	<div id="control_panel">
-		<p id="sudoku_title">数独<span>SUDOKU</span></p>
+	<div class="control-panel" id="j-control-panel">
+		<p class="sudoku-title" id="j-sudoku-title">数独<span>SUDOKU</span></p>
 		<hr/>
-		<input type="checkbox" id="sound"/>
-		<label for="sound" id="label_sound" title="music"></label>
-		<p id="sudoku_time" class="block">00:00:00</p>
-		<div id="sudoku_difficulty" class="block">
-			<p id="difficulty_title">游戏难度</p>
-			<p id="difficulty">
+		<input type="checkbox" class="sound" id="j-sound"/>
+		<label for="j-sound" class="label-sound" id="j-label-sound" title="music"></label>
+		<p class="block sudoku-time" id="j-sudoku-time">00:00:00</p>
+		<div class="block sudoku-difficulty" id="j-sudoku-difficulty">
+			<p class="difficulty-title">游戏难度</p>
+			<p class="difficulty" id="j-difficulty">
 				<input type="radio" name="radio" id="radio1" value="简单" checked="checked" />
 				<label for="radio1">简单</label>
 
@@ -213,13 +213,13 @@
 				<label for="radio3">困难</label>
 			</p>
 		</div>
-		<p id="sudoku_start" class="block">开始游戏</p>
-		<p id="sudoku_pause" class="block button">暂停</p>
-		<p id="sudoku_clear" class="block button">全部清空</p>
-		<p id="sudoku_help" class="block button">帮助</p>
-		<p id="sudoku_ruler" class="block button">游戏规则</p>
+		<p class="block sudoku-start" id="j-sudoku-start">开始游戏</p>
+		<p class="block button" id="j-sudoku-pause">暂停</p>
+		<p class="block button" id="j-sudoku-clear">全部清空</p>
+		<p class="block button" id="j-sudoku-help">帮助</p>
+		<p class="block button" id="j-sudoku-ruler">游戏规则</p>
 	</div>
 </div>
-<audio id="audio" src="" autoplay="true" loop></audio>
+<audio id="j-audio" src="" autoplay="true" loop></audio>
 </body>
 </html>
