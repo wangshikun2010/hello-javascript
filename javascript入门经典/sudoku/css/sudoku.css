@@ -22,17 +22,14 @@
 }
 
 .sudoku-table {
+	border-collapse: collapse;
+	width: 360px;
+	height: 360px;
+	border: 2px solid #87C7EC;
 	margin: 95px 10px 0px -100px;
 }
 
-.ceiltable {
-	border-collapse: collapse;
-	width: 120px;
-	height: 120px;
-	border: 2px solid #87C7EC;
-}
-
-.ceiltable td {
+.sudoku-table td {
 	position: relative;
 	border: 1px solid #87C7EC;
 	width: 33px;
@@ -43,9 +40,8 @@
 	background: url(../images/e.PNG) 20px 0px;
 }
 
-.ceiltable td:hover {
+.sudoku-table td:hover {
 	background: #FFFFFF;
-	/*opacity: 0.5;*/
 }
 
 /*控制面板*/
@@ -206,16 +202,17 @@ hr {
 	}
 }*/
 
-.number-ceiltable {
+.number-table {
 	position: absolute;
 	z-index: 9999;
 	left: 40px;
 	top: 20px;
 	border-collapse: collapse;
-	width: 70px;
+	width: 50px;
 	height: 50px;
 	cursor: pointer;
 	opacity: 1;
+	display: none;
 /*	-webkit-animation-name: mytable;
 	-webkit-animation-duration: 1s;
 	-webkit-animation-timing-function: ease-out;
@@ -223,7 +220,7 @@ hr {
 	-webkit-animation-iteration-count: 1;*/
 }
 
-.number-ceiltable td {
+.number-table td {
 	border: 1px solid #FF5400;
 	width: 15px;
 	height: 15px;
@@ -234,7 +231,7 @@ hr {
 	background: url(../images/e.PNG) 20px 0px;
 }
 
-.number-ceiltable td:hover {
+.number-table td:hover {
 	border: 1px solid #FF5400;
 	background: #FFFFFF;
 }

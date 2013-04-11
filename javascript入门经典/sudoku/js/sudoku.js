@@ -16,6 +16,7 @@ var ndSudoku_ruler;
 var ndAudio;
 var ndSound;
 var ndLabel_sound;
+var ndNumber_table;
 
 window.onload = function() {
 	isPlaySoundInputed = true;
@@ -35,6 +36,7 @@ window.onload = function() {
 	ndAudio = document.getElementById('j-audio');
 	ndSound = document.getElementById('j-sound');
 	ndLabel_sound = document.getElementById('j-label-sound');
+	ndNumber_table = document.getElementById('j-number-table');
 
 	ndSound.addEventListener('click',function() {changeSoundMode();},false);
 
@@ -153,38 +155,13 @@ function stopTime() {
  * 给td元素添加事件
  */
 function setNumberButton() {
-	var ceiltable = document.querySelectorAll('.ceiltable');
-
-	for (var i = 0; i < ceiltable.length; i++) {
-		var row = ceiltable[i].rows;
-
-		for (var j = 0; j < row.length; j++) {
-			for (var k = 0; k < row[j].cells.length; k++) {
-				var cell = row[j].cells[k];
-				cell.addEventListener('click', function() {
-					removeChildrenfunction();
-
-					if (isGetnumber == false) {
-						createNumberbutton(this);
-						setTdValue(this);
-					}
-				},false);
-			}
-		}
-	}
-}
-
-/**
- * 表格点击填值
- */
-function setTdValue(node) {
-	var table = document.getElementById("j-number-ceiltable");
-	var rows = table.rows;
-	for (var i = 0; i < rows.length; i++) {
-		for (var j = 0; j < rows[i].cells.length; j++) {
-			var cell = rows[i].cells[j];
+	var row = ndSudoku_table.rows;
+	for (var j = 0; j < row.length; j++) {
+		for (var k = 0; k < row[j].cells.length; k++) {
+			var cell = row[j].cells[k];
 			cell.addEventListener('click', function() {
-				node.innerText = this.innerText;
+				this.appendChild(ndNumber_table);
+				ndNumber_table.style.display = 'block';		
 			},false);
 		}
 	}
@@ -193,8 +170,8 @@ function setTdValue(node) {
 /**
  * 删除指定元素
  */
-function removeChildrenfunction() {
-	var ndNumber_ceiltable = ndSudoku_table.querySelectorAll('.number-ceiltable');
+function removeChildren(node) {
+	var ndNumber_ceiltable = node.querySelectorAll('.number-ceiltable');
 	for (var i=0; i<ndNumber_ceiltable.length; i++) {
 		clearAllNode(ndNumber_ceiltable[i]);
 	}
@@ -203,44 +180,18 @@ function removeChildrenfunction() {
 /**
 * 删除父节点下的所有子节点
 */
-function removeChildren(parentnode) {
-	var childs = parentnode.childNodes;
-	for (var i=0; i<childs.length; i++) {
-		parentnode.removeChild(childs[i]);
-	}
-}
 function clearAllNode(parentNode){
 	while (parentNode.firstChild) {
 		var oldNode = parentNode.removeChild(parentNode.firstChild);
 		oldNode = null;
 	}
 }
+
 /**
- * 创建数字按钮table
+ * 生成数独
  */
-function createNumberbutton(node) {
-	table = document.createElement("table");
-	table.setAttribute('class', 'number-ceiltable');
-	table.setAttribute('id', 'j-number-ceiltable');
-	var k = 1;
+function createSudoku() {
 
-	for (var i=1; i<4; i++) {
-		var row = document.createElement("tr"); 
-		row.id = i;
-		for (var j=1; j<4; j++) {
-			var cell = document.createElement("td"); 
-			cell.id = i + '_' + j;
-
-			cell.appendChild(document.createTextNode(k)); 
-			row.appendChild(cell);
-			k = k + 1;
-		}
-		table.appendChild(row);
-	}
-
-	node.appendChild(table);
-	// isCreateTable = true;
-	// return node;
 }
 
 /**
