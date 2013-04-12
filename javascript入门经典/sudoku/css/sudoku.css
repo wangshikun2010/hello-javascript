@@ -25,7 +25,7 @@
 	border-collapse: collapse;
 	width: 360px;
 	height: 360px;
-	border: 2px solid #87C7EC;
+	border: 3px solid #87C7EC;
 	margin: 95px 10px 0px -100px;
 }
 
@@ -43,6 +43,7 @@
 .sudoku-table td:hover {
 	background: #FFFFFF;
 }
+
 
 /*控制面板*/
 .control-panel {
@@ -280,4 +281,8 @@ hr {
 	text-align: center;
 	margin: 20px auto 0;
 	padding: 5px 0;
+}
+
+.border {
+	border-bottom: 3px solid #87C7EC;
 }

@@ -3,6 +3,7 @@ var isClick; //点击
 var isAClick; //点击确定
 var isCreateTable;
 var isGetnumber;
+var that;
 
 //元素节点名称
 var ndSudoku;
@@ -18,13 +19,14 @@ var ndSound;
 var ndLabel_sound;
 var ndNumber_table;
 
-window.onload = function() {
-	isPlaySoundInputed = true;
-	isClick = false;
-	isAClick = false;
-	isCreateTable = false;
-	isGetnumber = false;
+var Current_State = []; //记录当前矩阵情况
+var User_Input = []; //记录那些单元格是要用户输入的
+var Initial_State = [];  //程序生成的矩阵的初始状态
 
+/**
+ * 获取节点
+ */
+function getNode() {
 	ndSudoku = document.getElementById('j-sudoku');
 	ndSudoku_table = document.getElementById('j-sudoku-table');
 	ndSudoku_time = document.getElementById('j-sudoku-time');
@@ -36,8 +38,30 @@ window.onload = function() {
 	ndAudio = document.getElementById('j-audio');
 	ndSound = document.getElementById('j-sound');
 	ndLabel_sound = document.getElementById('j-label-sound');
-	ndNumber_table = document.getElementById('j-number-table');
+	ndNumber_table = document.getElementById('j-number-table');	
+}
 
+window.onload = function() {
+	isPlaySoundInputed = true;
+	isClick = false;
+	isAClick = false;
+	isCreateTable = false;
+	isGetnumber = false;
+
+	for (var i = 0; i <= 9; i++) {
+		Current_State[i] = [];
+		User_Input[i] = [];
+		Initial_State[i] = [];
+
+		for (var j = 0; j <= 9; j++) {
+			Current_State[i][j] = 0;
+			User_Input[i][j] = false;
+			Initial_State[i][j] = 0;
+		}
+	}
+
+	getNode();
+	addSudokuStyle();
 	ndSound.addEventListener('click',function() {changeSoundMode();},false);
 
 	ndSudoku_ruler.onclick = function() {
@@ -67,13 +91,13 @@ window.onload = function() {
 
 	// playSound('./sound/a.mp3');
 	setNumberButton();
+	start();
 }
 
 /**
  * 显示数独规则
  */
 function displaySudokuRuler(string1, string2) {
-
 	//create a div
 	var newDiv = document.createElement("div");
 	newDiv.setAttribute('id', 'new-div');
@@ -152,16 +176,52 @@ function stopTime() {
 }
 
 /**
+ * 生成9个小数独
+ */
+
+//搜索生成矩阵初始状态
+function start() {
+	var row = ndSudoku_table.rows;
+	for (var i = 0; i < row.length; i++) {
+		for (var j = 0; j < row[i].cells.length; j++) {
+			for (var k = 1; k <= 9; k++) {
+				var random_num = parseInt( Math.random() * 9 + 1 ); //产生1到9间的随机数
+				row[i].cells[j].innerHTML = random_num;
+			}
+		}
+	}
+}
+
+/**
  * 给td元素添加事件
  */
 function setNumberButton() {
 	var row = ndSudoku_table.rows;
-	for (var j = 0; j < row.length; j++) {
-		for (var k = 0; k < row[j].cells.length; k++) {
-			var cell = row[j].cells[k];
+	for (var i = 0; i < row.length; i++) {
+		for (var j = 0; j < row[i].cells.length; j++) {
+			var cell = row[i].cells[j];
+			cell.id = 'td' + i + j;
 			cell.addEventListener('click', function() {
 				this.appendChild(ndNumber_table);
-				ndNumber_table.style.display = 'block';		
+				ndNumber_table.style.display = 'block';
+				getTdNumber();
+
+				if (that != undefined) {
+					this.innerHTML = that;
+				}
+			},false);
+		}
+	}
+}
+
+function getTdNumber() {
+	var row = document.getElementById('j-number-table').rows;
+	for (var i = 0; i < row.length; i++) {
+		for (var j = 0; j < row[i].cells.length; j++) {
+			var cell = row[i].cells[j];
+			cell.addEventListener('click', function() {
+				console.log(this.innerText);
+				that = this.innerText;
 			},false);
 		}
 	}
@@ -191,7 +251,22 @@ function clearAllNode(parentNode){
  * 生成数独
  */
 function createSudoku() {
+}
 
+/**
+ * 添加样式
+ */
+function addSudokuStyle() {
+	var row = ndSudoku_table.rows;
+	for (var i=0; i<row.length; i++) {
+		for (var j = 0; j < row[i].cells.length; j++) {
+			if (j == 2 || j == 5) {
+				row[i].cells[j].style.borderRight = 3 + 'px';
+				row[i].cells[j].style.borderStyle = 'solid';
+				row[i].cells[j].style.borderColor = '#87C7EC';
+			}
+		}
+	}
 }
 
 /**
