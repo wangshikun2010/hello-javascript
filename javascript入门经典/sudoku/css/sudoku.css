@@ -190,18 +190,14 @@ hr {
 /**
  * 键盘数字样式
  */
-/*@-webkit-keyframes mytable {
+@-webkit-keyframes mytable {
 	0% {
-		width: 50px;
-		height: 20px;
 		opacity: 0;
 	}
 	100% {
-		width: 70px;
-		height: 50px;
 		opacity: 1;
 	}
-}*/
+}
 
 .number-table {
 	position: absolute;
@@ -214,11 +210,11 @@ hr {
 	cursor: pointer;
 	opacity: 1;
 	display: none;
-/*	-webkit-animation-name: mytable;
+	-webkit-animation-name: mytable;
 	-webkit-animation-duration: 1s;
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-timing-function: linear;
-	-webkit-animation-iteration-count: 1;*/
+	-webkit-animation-iteration-count: 1;
 }
 
 .number-table td {
