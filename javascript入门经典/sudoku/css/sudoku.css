@@ -201,38 +201,44 @@ hr {
 
 .number-table {
 	position: absolute;
-	z-index: 9999;
 	left: 40px;
 	top: 20px;
-	border-collapse: collapse;
-	width: 50px;
-	height: 50px;
+	z-index: 9999;
+	width: 69px;
+	height: 69px;
 	cursor: pointer;
 	opacity: 1;
+	border: 1px solid #FF5400;
+	border-radius: 5px;
+	padding: 1px;
 	display: none;
 	-webkit-animation-name: mytable;
 	-webkit-animation-duration: 1s;
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-timing-function: linear;
 	-webkit-animation-iteration-count: 1;
+	-webkit-user-select: none;
 }
 
-.number-table td {
-	border: 1px solid #FF5400;
-	width: 15px;
-	height: 15px;
+.number-table div {
+	float: left;
+	width: 21px;
+	height: 21px;
 	text-align: center;
 	font-size: 12px;
 	font-weight: bold;
 	color: #B847FF;
-	background: url(../images/e.PNG) 20px 0px;
+	border: 1px solid #FF5400;
+	border-radius: 5px;
+	margin: 0;
+	background: url(../images/e.PNG) 20px 0px;	
 }
 
-.number-table td:hover {
-	border: 1px solid #FF5400;
+.number-table div:hover {
 	background: #FFFFFF;
 }
 
+/*动态创建动画框样式*/
 @-webkit-keyframes mycolor {
 	0% {
 		width: 300px;

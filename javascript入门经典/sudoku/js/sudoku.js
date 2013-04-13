@@ -1,9 +1,9 @@
 var isPlaySoundInputed; //播放状态
 var isClick; //点击
 var isAClick; //点击确定
-var isCreateTable;
 var isGetnumber;
 var that;
+var isClickTd;
 
 //元素节点名称
 var ndSudoku;
@@ -45,8 +45,8 @@ window.onload = function() {
 	isPlaySoundInputed = true;
 	isClick = false;
 	isAClick = false;
-	isCreateTable = false;
 	isGetnumber = false;
+	isClickTd = false;
 
 	for (var i = 0; i < 9; i++) {
 		CurrentState[i] = [];
@@ -244,13 +244,11 @@ function setNumberButton() {
 			cell.id = 'td' + i + j;
 			cell.addEventListener('click', function() {
 				ndNumberTable.style.display = 'block';
-				ndNumberTable.style.left = getElementLeft(this) + 'px';
-				ndNumberTable.style.top = getElementTop(this) + 'px';
-
-				var text = getTdNumber();
-				if (text != undefined) {
-					this.innerText = text;
-				}
+				ndNumberTable.style.left = (getElementLeft(this) - 12) + 'px';
+				ndNumberTable.style.top = (getElementTop(this) - 12) + 'px';
+				
+				that = this;
+				getTdNumber();
 			},false);
 		}
 	}
@@ -281,18 +279,11 @@ function getElementTop(element){
 }
 
 function getTdNumber() {
-	var tdText;
-	console.log(document.getElementById('j-number-table'));
-	var row = document.getElementById('j-number-table').rows;
-	for (var i = 0; i < row.length; i++) {
-		for (var j = 0; j < row[i].cells.length; j++) {
-			var cell = row[i].cells[j];
-			cell.addEventListener('click', function() {
-				console.log(this.innerText);
-				tdText = this.innerText;
-				ndNumberTable.style.display = 'none';
-				return tdText;
-			},false);
+	var divs = document.getElementById('j-number-table').querySelectorAll('div');
+	for (var i = 0; i < divs.length; i++) {
+		divs[i].onclick = function() {
+			that.innerText = this.innerText;
+			ndNumberTable.style.display = 'none';
 		}
 	}
 }
