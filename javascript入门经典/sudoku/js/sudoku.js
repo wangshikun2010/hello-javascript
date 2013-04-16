@@ -7,6 +7,7 @@ var isClickTd;
 
 //元素节点名称
 var ndSudoku;
+var ndSudokuPanel;
 var ndSudokuTable;
 var ndSudokuTime;
 var ndSudokuStart;
@@ -19,15 +20,28 @@ var ndSound;
 var ndLabelSound;
 var ndNumberTable;
 
-var CurrentState = []; //记录当前矩阵情况
-var UserInput = []; //记录那些单元格是要用户输入的
-var InitialState = [];  //程序生成的矩阵的初始状态
+var Current_State = []; //记录当前矩阵情况
+var User_Input = []; //记录那些单元格是要用户输入的
+var Initial_State = [];  //程序生成的矩阵的初始状态
+
+for (var i = 1; i <= 9; i++) {
+	Current_State[i] = [];
+	User_Input[i] = [];
+	Initial_State[i] = [];
+	for(var j = 1; j <= 9; j++) {
+		Current_State[i][j] = 0;
+		User_Input[i][j] = false;
+		Initial_State[i][j] = 0;
+	}
+}
+var Proportion_Filled = 0.7; //矩阵中已经填的单元格的比例
 
 /**
  * 获取节点
  */
 function getNode() {
 	ndSudoku = document.getElementById('j-sudoku');
+	ndSudokuPanel = document.getElementById('j-sudoku-panel');
 	ndSudokuTable = document.getElementById('j-sudoku-table');
 	ndSudokuTime = document.getElementById('j-sudoku-time');
 	ndSudokuStart = document.getElementById('j-sudoku-start');
@@ -48,21 +62,14 @@ window.onload = function() {
 	isGetnumber = false;
 	isClickTd = false;
 
-	for (var i = 0; i < 9; i++) {
-		CurrentState[i] = [];
-		UserInput[i] = [];
-		InitialState[i] = [];
-
-		for (var j = 0; j < 9; j++) {
-			CurrentState[i][j] = 0;
-			UserInput[i][j] = false;
-			InitialState[i][j] = 0;
+	getNode();
+	ndSound.addEventListener('click',function() {changeSoundMode();},false);
+	ndSudoku.onclick = function() {
+		var clickTag = event.srcElement;
+		if (clickTag.tagName.toLowerCase() != "td") {
+			ndNumberTable.style.display = 'none';
 		}
 	}
-
-	getNode();
-	addSudokuStyle();
-	ndSound.addEventListener('click',function() {changeSoundMode();},false);
 
 	ndSudokuRuler.onclick = function() {
 		if ((isClick == true && isAClick == true) || isClick == false) {
@@ -91,8 +98,6 @@ window.onload = function() {
 
 	// playSound('./sound/a.mp3');
 	setNumberButton();
-	// start();
-	// partitionBlock();
 }
 
 /**
@@ -176,61 +181,131 @@ function stopTime() {
 	clearTimeout(time);
 }
 
+
 /**
- * 生成9个小数独
+ * 搜索第(i,j)位置处可以存储的数字
  */
+function getInitial(i,j) {
+	if (i > 9 || j > 9) {
+		return true;
+	}
 
-//搜索生成矩阵初始状态
-function start() {
-	var row = ndSudokuTable.rows;
-	for (var i = 0; i < row.length; i++) {
-		for (var j = 0; j < row[i].cells.length; j++) {
-			var randomNumber = parseInt( Math.random() * 9 + 1 ); //产生1到9间的随机数
-			row[i].cells[j].innerHTML = randomNumber;
+	for (var k = 1; k <= 9; k++) {
+		var can = true; // can 变量用于记录数字k能否放在 ( i , j ) 处 
+		for (var m = 1; m < i; m++) {
+			// 检查同一列是否出现过数字k
+			if (Initial_State[m][j] == k) {
+				can = false;
+				break;
+			}
 		}
-	}
-}
 
-function partitionBlock() {
-	for (var i = 0; i < 9; i++) {
-		InitialState[i] = [];
-	}
-	var row = ndSudokuTable.rows;
-	for (var i = 0; i < row.length; i++) {
-		for (var j = 0; j < row[i].cells.length; j++) {
-			if (i < 3) {
-				if (j < 3) {
-					InitialState[0].push(row[i].cells[j]);
-				} else if (j >= 3 && j < 6) {
-					InitialState[1].push(row[i].cells[j]);
-				} else {
-					InitialState[2].push(row[i].cells[j]);
-				}
-			} else if (i >= 3 && i < 6) {
-				if (j < 3) {
-					InitialState[3].push(row[i].cells[j]);
-				} else if (j >= 3 && j < 6) {
-					InitialState[4].push(row[i].cells[j]);
-				} else {
-					InitialState[5].push(row[i].cells[j]);
-				}
-			} else {
-				if (j < 3) {
-					InitialState[6].push(row[i].cells[j]);
-				} else if (j >= 3 && j < 6) {
-					InitialState[7].push(row[i].cells[j]);
-				} else {
-					InitialState[8].push(row[i].cells[j]);
+		if (can == true) {
+			for (var n = 1; n < j; n++) {
+				//检查同一行是否出现过数字k
+				if (Initial_State[i][n] == k) {
+					can = false;
+					break;
 				}
 			}
 		}
+		
+		// 检查在3×3的小方格中是否出现过数字k
+		if (can == true) {
+			var up_i = parseInt( i/3 ) * 3 + 3; //小方格在i坐标的上限
+			var up_j = parseInt( j/3 ) * 3 + 3; //小方格在j坐标的上限
+			
+			//这是针对特殊情况的处理
+			if (i % 3 == 0) {
+				up_i = i;
+			}
+				 
+			if (j % 3 == 0) {
+				up_j = j;
+			}
+	
+			for (var p = up_i-2; p <= up_i; p++) {
+				for (var q = up_j-2; q <= up_j; q++) {
+					if (Initial_State[p][q] == k) {
+						can = false;
+						break;
+					}
+				}
+				if (can == false) { 
+					break;
+				}
+			}
+		}
+
+		if (can) {
+			Initial_State[i][j] = k;
+			if (j < 9) {
+				// 到同一行的下一位置开始搜索
+				if (getInitial(i,j+1)) {   
+					return true;
+				}
+			} else {
+				if (i < 9) {
+					// 到下一行开始搜索
+					if (getInitial(i+1,1)) {    
+						return true;
+					}
+				} else {
+					return true;  // i >= 9  && j >= 9  , 搜索结束 
+				}
+			}
+			Initial_State[i][j] = 0; // 关键这一步：找不到解就要回复原状 
+		}
+	}
+	return false;
+}
+
+/**
+ * 生成矩阵初始状态
+ */
+function startSudoku() {
+
+	//将所有的数字为0
+	for (var i = 1; i <= 9; i++) {
+		for (var j = 1; j <= 9; j++) {
+			Initial_State[i][j] = 0;
+		}
 	}
 
-	for (var i = 0; i < 9; i++) {
-		console.log(InitialState[i]);
+	//顺序给出第一排数字
+	for (var i = 1; i <= 9; i++) { 
+		Initial_State[1][i] = i;
+	} 
+
+	/* 第一行随机排列产生 */
+	for (var i = 1; i <= 9; i++) {
+
+		//产生1到9间的随机数
+		var randomNumber = parseInt(Math.random() * 8 + 1);
+
+		var temp = Initial_State[1][i];
+
+		//交换第i个数字与第randomNumber个数字
+		Initial_State[1][i] = Initial_State[1][randomNumber];
+		Initial_State[1][randomNumber] = temp;
 	}
 
-
+	getInitial(2,1);
+	
+	for (var i = 1; i <= 9; i++) {
+		for (var j = 1; j <= 9; j++) {
+			var cell_i_j = eval( "document.getElementsByTagName(\"*\").cell" + i + j );
+			//向表格中填入数字
+			if (Math.random() < Proportion_Filled) {
+				cell_i_j.innerText = Initial_State[i][j]; // 0.8的概率设为已填数字
+				Current_State[i][j] = Initial_State[i][j]; 
+			} else {
+				cell_i_j.innerText = ""; // 0.2的概率设为空白
+				User_Input[i][j] = true;
+				cell_i_j.style.backgroundColor = '#CCCCCC'; //点击后的单元格背景颜色
+			}
+		}
+	}
 }
 
 /**
@@ -254,6 +329,9 @@ function setNumberButton() {
 	}
 }
 
+/**
+ * 获取元素距页面左距离
+ */
 function getElementLeft(element){
 	var actualLeft = element.offsetLeft;
 	var current = element.offsetParent;
@@ -266,6 +344,9 @@ function getElementLeft(element){
 	return actualLeft;
 }
 
+/**
+ * 获取元素距页面顶距离
+ */
 function getElementTop(element){
 	var actualTop = element.offsetTop;
 	var current = element.offsetParent;
@@ -278,34 +359,15 @@ function getElementTop(element){
 	return actualTop;
 }
 
+/**
+ * 获取Td元素的值
+ */
 function getTdNumber() {
 	var divs = document.getElementById('j-number-table').querySelectorAll('div');
 	for (var i = 0; i < divs.length; i++) {
 		divs[i].onclick = function() {
 			that.innerText = this.innerText;
 			ndNumberTable.style.display = 'none';
-		}
-	}
-}
-
-/**
- * 生成数独
- */
-function createSudoku() {
-}
-
-/**
- * 添加样式
- */
-function addSudokuStyle() {
-	var row = ndSudokuTable.rows;
-	for (var i=0; i<row.length; i++) {
-		for (var j = 0; j < row[i].cells.length; j++) {
-			if (j == 2 || j == 5) {
-				row[i].cells[j].style.borderRight = 3 + 'px';
-				row[i].cells[j].style.borderStyle = 'solid';
-				row[i].cells[j].style.borderColor = '#87C7EC';
-			}
 		}
 	}
 }

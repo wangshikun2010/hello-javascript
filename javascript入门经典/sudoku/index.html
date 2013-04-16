@@ -14,105 +14,21 @@
 <div class="sudoku" id="j-sudoku">
 	<div class="sudoku-panel" id="j-sudoku-panel">
 		<table class="sudoku-table" id="j-sudoku-table">
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr class="border">
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr class="border">
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
+		<script type="text/javascript">
+		var color_set = ["#FECCCB","#78DBDB","#F0DC9D","#B847FF","#3A9DF8"];
+
+		for (var i=1; i<=9; i++) {
+			document.write("<tr>");
+			for (var j=1; j<=9; j++) {
+				var num = parseInt(( i-1)/3 ) + parseInt((j-1)/3);
+				document.write("<td " + "id=cell" + i + j + "></td>");
+				var cell_i_j = eval("document.getElementsByTagName(\"*\").cell" + i + j);
+				cell_i_j.style.backgroundColor= color_set[num];
+			}
+			document.write("</tr>");
+		}
+		startSudoku();
+		</script>
 		</table>
 	</div>
 	<div class="control-panel" id="j-control-panel">
