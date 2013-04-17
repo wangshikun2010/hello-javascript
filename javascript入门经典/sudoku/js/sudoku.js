@@ -34,7 +34,7 @@ for (var i = 1; i <= 9; i++) {
 		Initial_State[i][j] = 0;
 	}
 }
-var Proportion_Filled = 0.7; //矩阵中已经填的单元格的比例
+var Proportion_Filled = 0.9; //矩阵中已经填的单元格的比例
 
 /**
  * 获取节点
@@ -186,12 +186,15 @@ function stopTime() {
  * 搜索第(i,j)位置处可以存储的数字
  */
 function getInitial(i,j) {
+	// 处理超出范围的情况
 	if (i > 9 || j > 9) {
 		return true;
 	}
 
+	// k表示数字的范围
 	for (var k = 1; k <= 9; k++) {
-		var can = true; // can 变量用于记录数字k能否放在 ( i , j ) 处 
+		// can变量用于记录数字k能否放在(i,j)处
+		var can = true;
 		for (var m = 1; m < i; m++) {
 			// 检查同一列是否出现过数字k
 			if (Initial_State[m][j] == k) {
@@ -241,7 +244,7 @@ function getInitial(i,j) {
 			Initial_State[i][j] = k;
 			if (j < 9) {
 				// 到同一行的下一位置开始搜索
-				if (getInitial(i,j+1)) {   
+				if (getInitial(i,j+1)) {  
 					return true;
 				}
 			} else {
@@ -251,7 +254,7 @@ function getInitial(i,j) {
 						return true;
 					}
 				} else {
-					return true;  // i >= 9  && j >= 9  , 搜索结束 
+					return true; //i>=9 && j>=9,搜索结束
 				}
 			}
 			Initial_State[i][j] = 0; // 关键这一步：找不到解就要回复原状 
@@ -295,36 +298,55 @@ function startSudoku() {
 	for (var i = 1; i <= 9; i++) {
 		for (var j = 1; j <= 9; j++) {
 			var cell_i_j = eval( "document.getElementsByTagName(\"*\").cell" + i + j );
-			//向表格中填入数字
+			// 向表格中填入数字
 			if (Math.random() < Proportion_Filled) {
 				cell_i_j.innerText = Initial_State[i][j]; // 0.8的概率设为已填数字
-				Current_State[i][j] = Initial_State[i][j]; 
+				Current_State[i][j] = Initial_State[i][j];
 			} else {
 				cell_i_j.innerText = ""; // 0.2的概率设为空白
 				User_Input[i][j] = true;
-				cell_i_j.style.backgroundColor = '#CCCCCC'; //点击后的单元格背景颜色
+				cell_i_j.style.backgroundColor = '#CCCCCC'; // 空单元格背景颜色
 			}
 		}
 	}
+}
+
+//检测输入
+function checkFinish() {
+	var solve = true;
+	var array1 = [];
+
+	// console.log(ndSudokuTable);
+	var row = ndSudokuTable.rows;
+	for (var i=0; i<row.length; i++) {
+		console.log(row[0]);
+		for (var j=0; j<row[i].cells.length; j++) {
+			console.log(row[0].cells[j].innerText);
+			array1.push(row[0].cells[j].innerText);
+		}
+		break;
+	}
+	console.log(array1);
 }
 
 /**
  * 给td元素添加事件
  */
 function setNumberButton() {
-	var row = ndSudokuTable.rows;
-	for (var i = 0; i < row.length; i++) {
-		for (var j = 0; j < row[i].cells.length; j++) {
-			var cell = row[i].cells[j];
-			cell.id = 'td' + i + j;
-			cell.addEventListener('click', function() {
-				ndNumberTable.style.display = 'block';
-				ndNumberTable.style.left = (getElementLeft(this) - 12) + 'px';
-				ndNumberTable.style.top = (getElementTop(this) - 12) + 'px';
-				
-				that = this;
-				getTdNumber();
-			},false);
+	for (var i = 1; i <= 9; i++) {
+		for (var j = 1; j <= 9; j++) {
+			var cell_i_j = eval( "document.getElementsByTagName(\"*\").cell" + i + j );
+			// 向表格中填入数字
+			if (User_Input[i][j] == true) {
+				cell_i_j.addEventListener('click', function() {
+					ndNumberTable.style.display = 'block';
+					ndNumberTable.style.left = (getElementLeft(this) - 12) + 'px';
+					ndNumberTable.style.top = (getElementTop(this) - 12) + 'px';
+					
+					that = this;
+					getTdNumber();
+				},false);
+			}
 		}
 	}
 }
@@ -368,6 +390,11 @@ function getTdNumber() {
 		divs[i].onclick = function() {
 			that.innerText = this.innerText;
 			ndNumberTable.style.display = 'none';
+			var thatId = that.id;
+			var string1 = thatId.substring(4,5);
+			var string2 = thatId.substring(5);
+			Current_State[string1][string2] = this.innerText;
+			checkFinish();
 		}
 	}
 }
