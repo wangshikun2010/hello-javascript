@@ -312,31 +312,6 @@ function startSudoku() {
 	}
 }
 
-//检测输入
-function checkFinish() {
-	var repeat = false;
-	var array = [];
-
-	var row = ndSudokuTable.rows;
-	for (var i=0; i<row.length; i++) {
-		array[i] = [];
-		for (var j=0; j<row[i].cells.length; j++) {
-			if (row[i].cells[j].innerText != '') {
-				array[i].push(row[i].cells[j].innerText);				
-			}
-		}
-
-		console.log(array[i]);
-		var s = array[i].join(",");
-		console.log(s);
-		for (var m = 0; m < array[i].length; m++) {
-			if (s.replace(array[i][m],"").indexOf(array[i][m] + ",") > -1) {
-				console.log("重复内容：" + array[i][m]);
-				repeat = true;
-			}
-		}
-	}
-}
 
 /**
  * 给td元素添加事件
@@ -393,7 +368,6 @@ function getElementTop(element){
 /**
  * 获取Td元素的值
  */
-var repeat;
 function getTdNumber() {
 	var divs = document.getElementById('j-number-table').querySelectorAll('div');
 	for (var i = 0; i < divs.length; i++) {
@@ -406,23 +380,19 @@ function getTdNumber() {
 			Current_State[string1][string2] = this.innerText;
 			console.log(string1,string2);
 			console.log(Current_State[string1][string2]);
-			check(string1,string2);
+			checkFinish(string1,string2);
 		}
 	}
 }
 
-function check(x,y) {
-	var row = ndSudokuTable.rows[x - 1];
-	var array = [];
-	for (var i=0; i<row.cells.length; i++) {
-		if (row.cells[i].innerText != '') {
-			array.push(row.cells[i].innerText);				
-		}
-	}
-	console.log(array);
-	repeat = isRepeat(array);
-	console.log(repeat);
-
+/**
+ * 检测输入
+ */
+function checkFinish(x,y) {
+	var rowRepeat;
+	var colRepeat;
+	var blockRepeat;
+	
 	// 验证重复元素，有重复返回true；否则返回false
 	function isRepeat(arr) {
 		var hash = {};
@@ -436,36 +406,116 @@ function check(x,y) {
 		return false;
 	}
 
-	if (repeat == true) {
-		console.log(row);
+	var row = ndSudokuTable.rows[x - 1];
+	var rowArray = [];
+	for (var i=0; i<row.cells.length; i++) {
+		if (row.cells[i].innerText != '') {
+			rowArray.push(row.cells[i].innerText);				
+		}
+	}
+	console.log(rowArray);
+	rowRepeat = isRepeat(rowArray);
+
+	if (rowRepeat == true) {
 		row.style.background = '#EEEEEE';
 	} else {
 		row.style.background = '';
 	}
 
 	var rows = ndSudokuTable.rows;
-	var array1 = [];
+	var colArray = [];
 	for (var i=0; i<rows.length; i++) {
 		for (var j=0; j<rows[i].cells.length; j++) {
 			if (j == y-1 && rows[i].cells[j].innerText != '') {
-				array1.push(rows[i].cells[j].innerText);
+				colArray.push(rows[i].cells[j].innerText);
 			}
 		}
 	}
-	console.log(array1);
-	repeat = isRepeat(array1);
-	console.log(repeat);
+	console.log(colArray);
+	colRepeat = isRepeat(colArray);
 
 	for (var i=0; i<rows.length; i++) {
 		for (var j=0; j<rows[i].cells.length; j++) {
 			if ((j == y-1) && (rows[i].cells[j].innerText != '') && (i != x - 1)) {
-				if (repeat == true) {
+				if (colRepeat == true) {
 					rows[i].cells[j].style.background = '#EEEEEE';
 				} else {
 					rows[i].cells[j].style.background = '';
 				}
 			}
 		}
+	}
+
+	var InitialState = [];
+	for (var i = 0; i < 9; i++) {
+		InitialState[i] = [];
+	}
+	for (var i = 0; i < rows.length; i++) {
+		for (var j = 0; j < rows[i].cells.length; j++) {
+			if (i < 3) {
+				if (j < 3) {
+					InitialState[0].push(rows[i].cells[j]);
+				} else if (j >= 3 && j < 6) {
+					InitialState[1].push(rows[i].cells[j]);
+				} else {
+					InitialState[2].push(rows[i].cells[j]);
+				}
+			} else if (i >= 3 && i < 6) {
+				if (j < 3) {
+					InitialState[3].push(rows[i].cells[j]);
+				} else if (j >= 3 && j < 6) {
+					InitialState[4].push(rows[i].cells[j]);
+				} else {
+					InitialState[5].push(rows[i].cells[j]);
+				}
+			} else {
+				if (j < 3) {
+					InitialState[6].push(rows[i].cells[j]);
+				} else if (j >= 3 && j < 6) {
+					InitialState[7].push(rows[i].cells[j]);
+				} else {
+					InitialState[8].push(rows[i].cells[j]);
+				}
+			}
+		}
+	}
+
+	var can;
+	var blockArray = [];
+	for (var i = 0; i < 9; i++) {
+		for (var j=0; j<InitialState[i].length; j++) {
+			if (InitialState[i][j].id == 'cell'+ x + y) {
+				console.log(InitialState[i]);
+				for (var k=0; k<InitialState[i].length; k++) {
+					blockArray.push(InitialState[i][k].innerText);
+				}
+				console.log(blockArray);
+				blockRepeat = isRepeat(blockArray);
+				for (var k=0; k<InitialState[i].length; k++) {
+					if (blockRepeat == true && InitialState[i][k] != '') {
+						InitialState[i][k].style.background = '#EEEEEE';
+					} else {
+						InitialState[i][k].style.background = '';
+					}
+				}
+				can = true;
+			}
+			if (can == true) {
+				break;
+			}
+		}
+	}
+
+	var sudokuArray = [];
+	for (var i=0; i<rows.length; i++) {
+		for (var j=0; j<rows[i].cells.length; j++) {
+			if (rows[i].cells[j].innerText != '') {
+				sudokuArray.push(rows[i].cells[j].innerText);
+			}
+		}
+	}
+	if (sudokuArray.length == 81 && rowRepeat == false && colRepeat == false && blockRepeat == false) {
+		alert('成功');
 	}
 
 }
