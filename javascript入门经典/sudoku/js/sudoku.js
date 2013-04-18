@@ -305,7 +305,8 @@ function startSudoku() {
 			} else {
 				cell_i_j.innerText = ""; // 0.2的概率设为空白
 				User_Input[i][j] = true;
-				cell_i_j.style.backgroundColor = '#CCCCCC'; // 空单元格背景颜色
+				cell_i_j.style.backgroundColor = '#F3FDFF'; // 空单元格背景颜色
+				cell_i_j.style.color = 'red'; // 空单元格背景颜色
 			}
 		}
 	}
@@ -313,20 +314,28 @@ function startSudoku() {
 
 //检测输入
 function checkFinish() {
-	var solve = true;
-	var array1 = [];
+	var repeat = false;
+	var array = [];
 
-	// console.log(ndSudokuTable);
 	var row = ndSudokuTable.rows;
 	for (var i=0; i<row.length; i++) {
-		console.log(row[0]);
+		array[i] = [];
 		for (var j=0; j<row[i].cells.length; j++) {
-			console.log(row[0].cells[j].innerText);
-			array1.push(row[0].cells[j].innerText);
+			if (row[i].cells[j].innerText != '') {
+				array[i].push(row[i].cells[j].innerText);				
+			}
 		}
-		break;
+
+		console.log(array[i]);
+		var s = array[i].join(",");
+		console.log(s);
+		for (var m = 0; m < array[i].length; m++) {
+			if (s.replace(array[i][m],"").indexOf(array[i][m] + ",") > -1) {
+				console.log("重复内容：" + array[i][m]);
+				repeat = true;
+			}
+		}
 	}
-	console.log(array1);
 }
 
 /**
@@ -384,6 +393,7 @@ function getElementTop(element){
 /**
  * 获取Td元素的值
  */
+var repeat;
 function getTdNumber() {
 	var divs = document.getElementById('j-number-table').querySelectorAll('div');
 	for (var i = 0; i < divs.length; i++) {
@@ -394,9 +404,70 @@ function getTdNumber() {
 			var string1 = thatId.substring(4,5);
 			var string2 = thatId.substring(5);
 			Current_State[string1][string2] = this.innerText;
-			checkFinish();
+			console.log(string1,string2);
+			console.log(Current_State[string1][string2]);
+			check(string1,string2);
 		}
 	}
+}
+
+function check(x,y) {
+	var row = ndSudokuTable.rows[x - 1];
+	var array = [];
+	for (var i=0; i<row.cells.length; i++) {
+		if (row.cells[i].innerText != '') {
+			array.push(row.cells[i].innerText);				
+		}
+	}
+	console.log(array);
+	repeat = isRepeat(array);
+	console.log(repeat);
+
+	// 验证重复元素，有重复返回true；否则返回false
+	function isRepeat(arr) {
+		var hash = {};
+		for (var i in arr) {
+			if (hash[arr[i]]) {
+				return true;
+			}
+			// 不存在该元素，则赋值为true，可以赋任意值，相应的修改if判断条件即可
+			hash[arr[i]] = true;
+		}
+		return false;
+	}
+
+	if (repeat == true) {
+		console.log(row);
+		row.style.background = '#EEEEEE';
+	} else {
+		row.style.background = '';
+	}
+
+	var rows = ndSudokuTable.rows;
+	var array1 = [];
+	for (var i=0; i<rows.length; i++) {
+		for (var j=0; j<rows[i].cells.length; j++) {
+			if (j == y-1 && rows[i].cells[j].innerText != '') {
+				array1.push(rows[i].cells[j].innerText);
+			}
+		}
+	}
+	console.log(array1);
+	repeat = isRepeat(array1);
+	console.log(repeat);
+
+	for (var i=0; i<rows.length; i++) {
+		for (var j=0; j<rows[i].cells.length; j++) {
+			if ((j == y-1) && (rows[i].cells[j].innerText != '') && (i != x - 1)) {
+				if (repeat == true) {
+					rows[i].cells[j].style.background = '#EEEEEE';
+				} else {
+					rows[i].cells[j].style.background = '';
+				}
+			}
+		}
+	}
+
 }
 
 /**

@@ -36,6 +36,7 @@
 	height: 33px;
 	text-align: center;
 	font-size: 20px;
+	/*background: #DEF5FF;*/
 }
 
 .sudoku-table td:hover {
