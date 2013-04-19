@@ -18,12 +18,10 @@
 		for (var i=1; i<=9; i++) {
 			document.write("<tr>");
 			for (var j=1; j<=9; j++) {
-				document.write("<td " + "id=cell" + i + j + "></td>");
-				var cell_i_j = eval("document.getElementsByTagName(\"*\").cell" + i + j);
+				document.write("<td " + "id=cell"+i+j+"></td>");
 			}
 			document.write("</tr>");
 		}
-		startSudoku();
 		</script>
 		</table>
 	</div>
@@ -36,13 +34,13 @@
 		<div class="block sudoku-difficulty" id="j-sudoku-difficulty">
 			<p class="difficulty-title">游戏难度</p>
 			<p class="difficulty" id="j-difficulty">
-				<input type="radio" name="radio" id="radio1" value="简单" checked="checked" />
+				<input type="radio" name="radio" id="radio1" value="0.9" checked="checked" />
 				<label for="radio1">简单</label>
 
-				<input type="radio" name="radio" id="radio2" value="中等" />
+				<input type="radio" name="radio" id="radio2" value="0.6" />
 				<label for="radio2">中等</label>
 
-				<input type="radio" name="radio" id="radio3" value="困难" />
+				<input type="radio" name="radio" id="radio3" value="0.4" />
 				<label for="radio3">困难</label>
 			</p>
 		</div>

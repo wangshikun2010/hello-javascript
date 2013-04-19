@@ -120,6 +120,10 @@ hr {
 	margin: 0;
 }
 
+label:hover {
+	cursor: pointer;
+}
+
 .control-panel .sudoku-start {
 	width: 150px;
 	height: 35px;
@@ -210,11 +214,11 @@ hr {
 	border-radius: 5px;
 	padding: 1px;
 	display: none;
-	-webkit-animation-name: mytable;
+	/*-webkit-animation-name: mytable;
 	-webkit-animation-duration: 1s;
 	-webkit-animation-timing-function: ease-out;
 	-webkit-animation-timing-function: linear;
-	-webkit-animation-iteration-count: 1;
+	-webkit-animation-iteration-count: 1;*/
 	-webkit-user-select: none;
 }
 
@@ -258,9 +262,9 @@ hr {
 	font-family: Microsoft yahei;
 	font-weight: bold;
 	opacity: 1;
-	-webkit-animation-name: mycolor;
+	/*-webkit-animation-name: mycolor;
 	-webkit-animation-duration: 2s;
-	-webkit-animation-timing-function: ease-out;
+	-webkit-animation-timing-function: ease-out;*/
 }
 
 #new-div:hover {
@@ -275,6 +279,8 @@ hr {
 	padding: 5px 0;
 }
 
-.border {
+.rowborder {
 	border-bottom: 3px solid #87C7EC;
 }
+
+

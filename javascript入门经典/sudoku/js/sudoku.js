@@ -1,9 +1,7 @@
 var isPlaySoundInputed; //播放状态
 var isClick; //点击
 var isAClick; //点击确定
-var isGetnumber;
-var that;
-var isClickTd;
+var that; //获取当前点击元素
 
 //元素节点名称
 var ndSudoku;
@@ -34,7 +32,7 @@ for (var i = 1; i <= 9; i++) {
 		Initial_State[i][j] = 0;
 	}
 }
-var Proportion_Filled = 0.9; //矩阵中已经填的单元格的比例
+var gameDifficult; //矩阵中已经填的单元格的比例
 
 /**
  * 获取节点
@@ -59,10 +57,9 @@ window.onload = function() {
 	isPlaySoundInputed = true;
 	isClick = false;
 	isAClick = false;
-	isGetnumber = false;
-	isClickTd = false;
 
 	getNode();
+	addSudokuStyle();
 	ndSound.addEventListener('click',function() {changeSoundMode();},false);
 	ndSudoku.onclick = function() {
 		var clickTag = event.srcElement;
@@ -82,7 +79,15 @@ window.onload = function() {
 	}
 
 	ndSudokuStart.onclick = function() {
+		var radios = document.getElementsByName('radio');
+		for (var i=0; i<radios.length; i++) {
+			if (radios[i].checked) {
+				gameDifficult = radios[i].value;
+			}
+		}
+		startSudoku();
 		startTiming();
+		setNumberButton();
 	}
 
 	ndSudokuPause.onclick = function() {
@@ -97,11 +102,10 @@ window.onload = function() {
 	}
 
 	// playSound('./sound/a.mp3');
-	setNumberButton();
 }
 
 /**
- * 显示数独规则
+ * 显示对话框
  */
 function displaySudokuRuler(string1, string2) {
 	//create a div
@@ -299,7 +303,7 @@ function startSudoku() {
 		for (var j = 1; j <= 9; j++) {
 			var cell_i_j = eval( "document.getElementsByTagName(\"*\").cell" + i + j );
 			// 向表格中填入数字
-			if (Math.random() < Proportion_Filled) {
+			if (Math.random() < gameDifficult) {
 				cell_i_j.innerText = Initial_State[i][j]; // 0.8的概率设为已填数字
 				Current_State[i][j] = Initial_State[i][j];
 			} else {
@@ -311,7 +315,6 @@ function startSudoku() {
 		}
 	}
 }
-
 
 /**
  * 给td元素添加事件
@@ -482,6 +485,7 @@ function checkFinish(x,y) {
 
 	var can;
 	var blockArray = [];
+	var solve;
 	for (var i = 0; i < 9; i++) {
 		for (var j=0; j<InitialState[i].length; j++) {
 			if (InitialState[i][j].id == 'cell'+ x + y) {
@@ -491,13 +495,13 @@ function checkFinish(x,y) {
 				}
 				console.log(blockArray);
 				blockRepeat = isRepeat(blockArray);
-				for (var k=0; k<InitialState[i].length; k++) {
-					if (blockRepeat == true && InitialState[i][k] != '') {
-						InitialState[i][k].style.background = '#EEEEEE';
-					} else {
-						InitialState[i][k].style.background = '';
-					}
-				}
+				// for (var k=0; k<InitialState[i].length; k++) {
+				// 	if ((blockRepeat == true) && InitialState[i][k].innerText != '' && InitialState[i][k].id != 'cell'+ x + y) {
+				// 		InitialState[i][k].style.background = '#EEEEEE';
+				// 	} else {
+				// 		InitialState[i][k].style.background = '';
+				// 	}
+				// }
 				can = true;
 			}
 			if (can == true) {
@@ -515,9 +519,32 @@ function checkFinish(x,y) {
 		}
 	}
 	if (sudokuArray.length == 81 && rowRepeat == false && colRepeat == false && blockRepeat == false) {
-		alert('成功');
+		stopTime();
+		var string1 = '成功' + timeTransform(time);
+		var string2 = '确定';
+		displaySudokuRuler(string1, string2);
 	}
 
+}
+
+/**
+ * 添加样式
+ */
+function addSudokuStyle() {
+	var row = ndSudokuTable.rows;
+	for (var i=0; i<row.length; i++) {
+		if (i == 2 || i == 5) {
+			row[i].setAttribute('class', 'rowborder');
+		}
+
+		for (var j = 0; j < row[i].cells.length; j++) {
+			if (j == 2 || j == 5) {
+				row[i].cells[j].style.borderRight = 3 + 'px';
+				row[i].cells[j].style.borderStyle = 'solid';
+				row[i].cells[j].style.borderColor = '#87C7EC';
+			}
+		}
+	}
 }
 
 /**
