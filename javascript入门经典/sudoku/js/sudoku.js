@@ -18,18 +18,18 @@ var ndSound;
 var ndLabelSound;
 var ndNumberTable;
 
-var Current_State = []; //记录当前矩阵情况
-var User_Input = []; //记录那些单元格是要用户输入的
-var Initial_State = [];  //程序生成的矩阵的初始状态
+var currentState = []; //记录当前矩阵情况
+var userInput = []; //记录那些单元格是要用户输入的
+var initialState = [];  //程序生成的矩阵的初始状态
 
 for (var i = 1; i <= 9; i++) {
-	Current_State[i] = [];
-	User_Input[i] = [];
-	Initial_State[i] = [];
+	currentState[i] = [];
+	userInput[i] = [];
+	initialState[i] = [];
 	for(var j = 1; j <= 9; j++) {
-		Current_State[i][j] = 0;
-		User_Input[i][j] = false;
-		Initial_State[i][j] = 0;
+		currentState[i][j] = 0;
+		userInput[i][j] = false;
+		initialState[i][j] = 0;
 	}
 }
 var gameDifficult; //矩阵中已经填的单元格的比例
@@ -201,7 +201,7 @@ function getInitial(i,j) {
 		var can = true;
 		for (var m = 1; m < i; m++) {
 			// 检查同一列是否出现过数字k
-			if (Initial_State[m][j] == k) {
+			if (initialState[m][j] == k) {
 				can = false;
 				break;
 			}
@@ -210,7 +210,7 @@ function getInitial(i,j) {
 		if (can == true) {
 			for (var n = 1; n < j; n++) {
 				//检查同一行是否出现过数字k
-				if (Initial_State[i][n] == k) {
+				if (initialState[i][n] == k) {
 					can = false;
 					break;
 				}
@@ -233,7 +233,7 @@ function getInitial(i,j) {
 	
 			for (var p = up_i-2; p <= up_i; p++) {
 				for (var q = up_j-2; q <= up_j; q++) {
-					if (Initial_State[p][q] == k) {
+					if (initialState[p][q] == k) {
 						can = false;
 						break;
 					}
@@ -245,7 +245,7 @@ function getInitial(i,j) {
 		}
 
 		if (can) {
-			Initial_State[i][j] = k;
+			initialState[i][j] = k;
 			if (j < 9) {
 				// 到同一行的下一位置开始搜索
 				if (getInitial(i,j+1)) {  
@@ -261,7 +261,7 @@ function getInitial(i,j) {
 					return true; //i>=9 && j>=9,搜索结束
 				}
 			}
-			Initial_State[i][j] = 0; // 关键这一步：找不到解就要回复原状 
+			initialState[i][j] = 0; // 关键这一步：找不到解就要回复原状 
 		}
 	}
 	return false;
@@ -275,13 +275,13 @@ function startSudoku() {
 	//将所有的数字为0
 	for (var i = 1; i <= 9; i++) {
 		for (var j = 1; j <= 9; j++) {
-			Initial_State[i][j] = 0;
+			initialState[i][j] = 0;
 		}
 	}
 
 	//顺序给出第一排数字
 	for (var i = 1; i <= 9; i++) { 
-		Initial_State[1][i] = i;
+		initialState[1][i] = i;
 	} 
 
 	/* 第一行随机排列产生 */
@@ -290,11 +290,11 @@ function startSudoku() {
 		//产生1到9间的随机数
 		var randomNumber = parseInt(Math.random() * 8 + 1);
 
-		var temp = Initial_State[1][i];
+		var temp = initialState[1][i];
 
 		//交换第i个数字与第randomNumber个数字
-		Initial_State[1][i] = Initial_State[1][randomNumber];
-		Initial_State[1][randomNumber] = temp;
+		initialState[1][i] = initialState[1][randomNumber];
+		initialState[1][randomNumber] = temp;
 	}
 
 	getInitial(2,1);
@@ -304,11 +304,11 @@ function startSudoku() {
 			var cell_i_j = eval( "document.getElementsByTagName(\"*\").cell" + i + j );
 			// 向表格中填入数字
 			if (Math.random() < gameDifficult) {
-				cell_i_j.innerText = Initial_State[i][j]; // 0.8的概率设为已填数字
-				Current_State[i][j] = Initial_State[i][j];
+				cell_i_j.innerText = initialState[i][j]; // 0.8的概率设为已填数字
+				currentState[i][j] = initialState[i][j];
 			} else {
 				cell_i_j.innerText = ""; // 0.2的概率设为空白
-				User_Input[i][j] = true;
+				userInput[i][j] = true;
 				cell_i_j.style.backgroundColor = '#F3FDFF'; // 空单元格背景颜色
 				cell_i_j.style.color = 'red'; // 空单元格背景颜色
 			}
@@ -324,7 +324,7 @@ function setNumberButton() {
 		for (var j = 1; j <= 9; j++) {
 			var cell_i_j = eval( "document.getElementsByTagName(\"*\").cell" + i + j );
 			// 向表格中填入数字
-			if (User_Input[i][j] == true) {
+			if (userInput[i][j] == true) {
 				cell_i_j.addEventListener('click', function() {
 					ndNumberTable.style.display = 'block';
 					ndNumberTable.style.left = (getElementLeft(this) - 12) + 'px';
@@ -380,9 +380,9 @@ function getTdNumber() {
 			var thatId = that.id;
 			var string1 = thatId.substring(4,5);
 			var string2 = thatId.substring(5);
-			Current_State[string1][string2] = this.innerText;
+			currentState[string1][string2] = this.innerText;
 			console.log(string1,string2);
-			console.log(Current_State[string1][string2]);
+			console.log(currentState[string1][string2]);
 			checkFinish(string1,string2);
 		}
 	}
@@ -449,35 +449,35 @@ function checkFinish(x,y) {
 		}
 	}
 
-	var InitialState = [];
+	var group = [];
 	for (var i = 0; i < 9; i++) {
-		InitialState[i] = [];
+		group[i] = [];
 	}
 	for (var i = 0; i < rows.length; i++) {
 		for (var j = 0; j < rows[i].cells.length; j++) {
 			if (i < 3) {
 				if (j < 3) {
-					InitialState[0].push(rows[i].cells[j]);
+					group[0].push(rows[i].cells[j]);
 				} else if (j >= 3 && j < 6) {
-					InitialState[1].push(rows[i].cells[j]);
+					group[1].push(rows[i].cells[j]);
 				} else {
-					InitialState[2].push(rows[i].cells[j]);
+					group[2].push(rows[i].cells[j]);
 				}
 			} else if (i >= 3 && i < 6) {
 				if (j < 3) {
-					InitialState[3].push(rows[i].cells[j]);
+					group[3].push(rows[i].cells[j]);
 				} else if (j >= 3 && j < 6) {
-					InitialState[4].push(rows[i].cells[j]);
+					group[4].push(rows[i].cells[j]);
 				} else {
-					InitialState[5].push(rows[i].cells[j]);
+					group[5].push(rows[i].cells[j]);
 				}
 			} else {
 				if (j < 3) {
-					InitialState[6].push(rows[i].cells[j]);
+					group[6].push(rows[i].cells[j]);
 				} else if (j >= 3 && j < 6) {
-					InitialState[7].push(rows[i].cells[j]);
+					group[7].push(rows[i].cells[j]);
 				} else {
-					InitialState[8].push(rows[i].cells[j]);
+					group[8].push(rows[i].cells[j]);
 				}
 			}
 		}
@@ -487,19 +487,19 @@ function checkFinish(x,y) {
 	var blockArray = [];
 	var solve;
 	for (var i = 0; i < 9; i++) {
-		for (var j=0; j<InitialState[i].length; j++) {
-			if (InitialState[i][j].id == 'cell'+ x + y) {
-				console.log(InitialState[i]);
-				for (var k=0; k<InitialState[i].length; k++) {
-					blockArray.push(InitialState[i][k].innerText);
+		for (var j=0; j<group[i].length; j++) {
+			if (group[i][j].id == 'cell'+ x + y) {
+				console.log(group[i]);
+				for (var k=0; k<group[i].length; k++) {
+					blockArray.push(group[i][k].innerText);
 				}
 				console.log(blockArray);
 				blockRepeat = isRepeat(blockArray);
-				// for (var k=0; k<InitialState[i].length; k++) {
-				// 	if ((blockRepeat == true) && InitialState[i][k].innerText != '' && InitialState[i][k].id != 'cell'+ x + y) {
-				// 		InitialState[i][k].style.background = '#EEEEEE';
+				// for (var k=0; k<group[i].length; k++) {
+				// 	if ((blockRepeat == true) && group[i][k].innerText != '' && group[i][k].id != 'cell'+ x + y) {
+				// 		group[i][k].style.background = '#EEEEEE';
 				// 	} else {
-				// 		InitialState[i][k].style.background = '';
+				// 		group[i][k].style.background = '';
 				// 	}
 				// }
 				can = true;
