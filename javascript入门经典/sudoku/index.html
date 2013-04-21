@@ -15,6 +15,7 @@
 	<div class="sudoku-panel" id="j-sudoku-panel">
 		<table class="sudoku-table" id="j-sudoku-table">
 		<script type="text/javascript">
+		// TODO 把下面的js代码移动到js文件
 		for (var i=1; i<=9; i++) {
 			document.write("<tr>");
 			for (var j=1; j<=9; j++) {
@@ -34,13 +35,13 @@
 		<div class="block sudoku-difficulty" id="j-sudoku-difficulty">
 			<p class="difficulty-title">游戏难度</p>
 			<p class="difficulty" id="j-difficulty">
-				<input type="radio" name="radio" id="radio1" value="0.9" checked="checked" />
+				<input type="radio" name="radio" id="radio1" value="0.8" checked="checked" />
 				<label for="radio1">简单</label>
 
-				<input type="radio" name="radio" id="radio2" value="0.6" />
+				<input type="radio" name="radio" id="radio2" value="0.5" />
 				<label for="radio2">中等</label>
 
-				<input type="radio" name="radio" id="radio3" value="0.4" />
+				<input type="radio" name="radio" id="radio3" value="0.3" />
 				<label for="radio3">困难</label>
 			</p>
 		</div>
@@ -48,7 +49,7 @@
 		<p class="block button" id="j-sudoku-pause">暂停</p>
 		<p class="block button" id="j-sudoku-clear">全部清空</p>
 		<p class="block button" id="j-sudoku-help">帮助</p>
-		<p class="block button" id="j-sudoku-ruler">游戏规则</p>
+		<p class="block button" id="j-sudoku-rule">游戏规则</p>
 	</div>
 </div>
 <audio id="j-audio" src="" autoplay="true" loop></audio>

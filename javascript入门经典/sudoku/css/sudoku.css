@@ -279,8 +279,12 @@ label:hover {
 	padding: 5px 0;
 }
 
-.rowborder {
+.sudoku-table .rowborder {
 	border-bottom: 3px solid #87C7EC;
+}
+
+.sudoku-table .cellborder {
+	border-right: 3px solid #87C7EC;
 }
 
 

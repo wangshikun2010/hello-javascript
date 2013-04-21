@@ -1,66 +1,42 @@
-var isPlaySoundInputed; //播放状态
-var isClick; //点击
-var isAClick; //点击确定
-var that; //获取当前点击元素
+var isSoundEnabled, // 播放状态
+	isDialogOpen, 	// 是否打开对话框
+	// TODO 清理
+	isAClick, 		// 点击确定
+	currentCell; 	// 获取当前点击元素
 
-//元素节点名称
-var ndSudoku;
-var ndSudokuPanel;
-var ndSudokuTable;
-var ndSudokuTime;
-var ndSudokuStart;
-var ndSudokuPause;
-var ndSudokuClear;
-var ndSudokuHelp;
-var ndSudokuRuler;
-var ndAudio;
-var ndSound;
-var ndLabelSound;
-var ndNumberTable;
+var timeElapsed = 0; // 计时
+var timer;
 
-var currentState = []; //记录当前矩阵情况
-var userInput = []; //记录那些单元格是要用户输入的
-var initialState = [];  //程序生成的矩阵的初始状态
+// 元素节点名称
+var ndSudoku,
+	ndSudokuPanel,
+	ndSudokuTable,
+	ndSudokuTime,
+	ndSudokuStart,
+	ndSudokuPause,
+	ndSudokuClear,
+	ndSudokuHelp,
+	ndSudokuRule,
+	ndAudio,
+	ndSound,
+	ndLabelSound,
+	ndNumberTable;
 
-for (var i = 1; i <= 9; i++) {
-	currentState[i] = [];
-	userInput[i] = [];
-	initialState[i] = [];
-	for(var j = 1; j <= 9; j++) {
-		currentState[i][j] = 0;
-		userInput[i][j] = false;
-		initialState[i][j] = 0;
-	}
-}
-var gameDifficult; //矩阵中已经填的单元格的比例
-
-/**
- * 获取节点
- */
-function getNode() {
-	ndSudoku = document.getElementById('j-sudoku');
-	ndSudokuPanel = document.getElementById('j-sudoku-panel');
-	ndSudokuTable = document.getElementById('j-sudoku-table');
-	ndSudokuTime = document.getElementById('j-sudoku-time');
-	ndSudokuStart = document.getElementById('j-sudoku-start');
-	ndSudokuPause = document.getElementById('j-sudoku-pause');
-	ndSudokuClear = document.getElementById('j-sudoku-clear');
-	ndSudokuHelp = document.getElementById('j-sudoku-help');
-	ndSudokuRuler = document.getElementById('j-sudoku-ruler');
-	ndAudio = document.getElementById('j-audio');
-	ndSound = document.getElementById('j-sound');
-	ndLabelSound = document.getElementById('j-label-sound');
-	ndNumberTable = document.getElementById('j-number-table');	
-}
+var currentState = [], 	// 记录当前矩阵情况
+	userInput = [], 	// 记录那些单元格是要用户输入的
+	initialState = []; 	// 程序生成的矩阵的初始状态
+var gameDifficult; 		//矩阵中已经填的单元格的比例
 
 window.onload = function() {
-	isPlaySoundInputed = true;
-	isClick = false;
+	isSoundEnabled = true;
+	isDialogOpen = false;
 	isAClick = false;
 
-	getNode();
+	getNodes();
 	addSudokuStyle();
-	ndSound.addEventListener('click',function() {changeSoundMode();},false);
+	ndSound.addEventListener('click', changeSoundMode, false);
+
+	// TODO 隐藏九宫格的逻辑存在问题
 	ndSudoku.onclick = function() {
 		var clickTag = event.srcElement;
 		if (clickTag.tagName.toLowerCase() != "td") {
@@ -68,16 +44,28 @@ window.onload = function() {
 		}
 	}
 
-	ndSudokuRuler.onclick = function() {
-		if ((isClick == true && isAClick == true) || isClick == false) {
+	// TODO 整理对话框,把弹框的代码放在html
+	ndSudokuRule.onclick = function() {
+		if ((isDialogOpen == true && isAClick == true) || isDialogOpen == false) {
 			var string1 = "用1至9之间的数字填满空格，一个格子只能填入一个数字,即每个数字在每一行、每一列和每一区只能出现一次";
 			var string2 = "我知道了";
 			displaySudokuRuler(string1, string2);
-		} else if (isClick == true || isAClick == false) {
+		} else if (isDialogOpen == true || isAClick == false) {
+			return;
+		}
+	}
+	ndSudokuPause.onclick = function() {
+		if ((isDialogOpen == true && isAClick == true) || isDialogOpen == false) {
+			var string1 = '暂停';
+			var string2 = '继续';
+			stopTimer();
+			displaySudokuRuler(string1, string2);
+		} else if (isDialogOpen == true || isAClick == false) {
 			return;
 		}
 	}
 
+	// TODO radio:checked, getDiffculty()
 	ndSudokuStart.onclick = function() {
 		var radios = document.getElementsByName('radio');
 		for (var i=0; i<radios.length; i++) {
@@ -86,27 +74,40 @@ window.onload = function() {
 			}
 		}
 		startSudoku();
-		startTiming();
-		setNumberButton();
-	}
-
-	ndSudokuPause.onclick = function() {
-		if ((isClick == true && isAClick == true) || isClick == false) {
-			var string1 = '暂停';
-			var string2 = '继续';
-			stopTime();
-			displaySudokuRuler(string1, string2);
-		} else if (isClick == true || isAClick == false) {
-			return;
-		}
+		startTimer(true);
+		addNumberButtonEvents();
+		bindNumberPadEvents();
 	}
 
 	// playSound('./sound/a.mp3');
 }
 
+
+/**
+ * 获取节点
+ */
+function getNodes() {
+	ndSudoku = document.getElementById('j-sudoku');
+	ndSudokuPanel = document.getElementById('j-sudoku-panel');
+	ndSudokuTable = document.getElementById('j-sudoku-table');
+	ndSudokuTime = document.getElementById('j-sudoku-time');
+	ndSudokuStart = document.getElementById('j-sudoku-start');
+	ndSudokuPause = document.getElementById('j-sudoku-pause');
+	ndSudokuClear = document.getElementById('j-sudoku-clear');
+	ndSudokuHelp = document.getElementById('j-sudoku-help');
+	ndSudokuRule = document.getElementById('j-sudoku-rule');
+	ndAudio = document.getElementById('j-audio');
+	ndSound = document.getElementById('j-sound');
+	ndLabelSound = document.getElementById('j-label-sound');
+	ndNumberTable = document.getElementById('j-number-table');	
+}
+
+
+
 /**
  * 显示对话框
  */
+// TODO 删除掉
 function displaySudokuRuler(string1, string2) {
 	//create a div
 	var newDiv = document.createElement("div");
@@ -123,12 +124,12 @@ function displaySudokuRuler(string1, string2) {
 	newA.innerText = string2;
 	newDiv.appendChild(newA);
 
-	isClick = true;
+	isDialogOpen = true;
 	isAClick = false;
 	newA.onclick = function() {
 		isAClick = true;
 		if (newA.innerText == '继续') {
-			startTiming();
+			startTimer();
 		}
 		ndSudoku.removeChild(newDiv);
 		return false;
@@ -138,7 +139,7 @@ function displaySudokuRuler(string1, string2) {
 /**
  * 将秒数转换为时分秒格式
  */
-function timeTransform(number) {
+function formatTime(number) {
 	var hours;
 	var minutes;
 	var seconds;
@@ -173,16 +174,19 @@ function timeTransform(number) {
 /**
  * 开始计时
  */
-var c = 0;
-var time;
-function startTiming() {
-	ndSudokuTime.innerText = timeTransform(c);
-	c = c + 1;
-	time = setTimeout('startTiming()',1000);
+// TODO 时间在开始,暂停,重新开始,整个过程表现的有问题
+function startTimer(isReset) {
+	if (isReset) {
+		stopTimer();
+	}
+	ndSudokuTime.innerText = formatTime(timeElapsed);
+	timeElapsed = timeElapsed + 1;
+	timer = setTimeout('startTimer()',1000);
 }
 
-function stopTime() {
-	clearTimeout(time);
+function stopTimer() {
+	clearTimeout(timer);
+	timeElapsed = 0;
 }
 
 
@@ -197,28 +201,28 @@ function getInitial(i,j) {
 
 	// k表示数字的范围
 	for (var k = 1; k <= 9; k++) {
-		// can变量用于记录数字k能否放在(i,j)处
-		var can = true;
+		// isConflict变量用于记录数字k能否放在(i,j)处
+		var isConflict = false;
 		for (var m = 1; m < i; m++) {
 			// 检查同一列是否出现过数字k
 			if (initialState[m][j] == k) {
-				can = false;
+				isConflict = true;
 				break;
 			}
 		}
 
-		if (can == true) {
+		if (isConflict === false) {
 			for (var n = 1; n < j; n++) {
 				//检查同一行是否出现过数字k
 				if (initialState[i][n] == k) {
-					can = false;
+					isConflict = true;
 					break;
 				}
 			}
 		}
 		
 		// 检查在3×3的小方格中是否出现过数字k
-		if (can == true) {
+		if (isConflict === false) {
 			var up_i = parseInt( i/3 ) * 3 + 3; //小方格在i坐标的上限
 			var up_j = parseInt( j/3 ) * 3 + 3; //小方格在j坐标的上限
 			
@@ -234,17 +238,17 @@ function getInitial(i,j) {
 			for (var p = up_i-2; p <= up_i; p++) {
 				for (var q = up_j-2; q <= up_j; q++) {
 					if (initialState[p][q] == k) {
-						can = false;
+						isConflict = true;
 						break;
 					}
 				}
-				if (can == false) { 
+				if (isConflict == true) { 
 					break;
 				}
 			}
 		}
 
-		if (can) {
+		if (isConflict === false) {
 			initialState[i][j] = k;
 			if (j < 9) {
 				// 到同一行的下一位置开始搜索
@@ -271,10 +275,13 @@ function getInitial(i,j) {
  * 生成矩阵初始状态
  */
 function startSudoku() {
-
-	//将所有的数字为0
 	for (var i = 1; i <= 9; i++) {
-		for (var j = 1; j <= 9; j++) {
+		currentState[i] = [];
+		userInput[i] = [];
+		initialState[i] = [];
+		for(var j = 1; j <= 9; j++) {
+			currentState[i][j] = 0;
+			userInput[i][j] = false;
 			initialState[i][j] = 0;
 		}
 	}
@@ -299,18 +306,22 @@ function startSudoku() {
 
 	getInitial(2,1);
 	
+	// TODO 在重新生成数独时改变背景颜色
 	for (var i = 1; i <= 9; i++) {
 		for (var j = 1; j <= 9; j++) {
-			var cell_i_j = eval( "document.getElementsByTagName(\"*\").cell" + i + j );
+			var cell = document.querySelector('#cell' + i + j);
 			// 向表格中填入数字
 			if (Math.random() < gameDifficult) {
-				cell_i_j.innerText = initialState[i][j]; // 0.8的概率设为已填数字
+				cell.innerText = initialState[i][j]; // 0.8的概率设为已填数字
 				currentState[i][j] = initialState[i][j];
+				// 欲填充的单元格
+				cell.style.backgroundColor = '#FFFFFF';
+				cell.style.color = '#000000';
 			} else {
-				cell_i_j.innerText = ""; // 0.2的概率设为空白
+				cell.innerText = ""; // 0.2的概率设为空白
 				userInput[i][j] = true;
-				cell_i_j.style.backgroundColor = '#F3FDFF'; // 空单元格背景颜色
-				cell_i_j.style.color = 'red'; // 空单元格背景颜色
+				cell.style.backgroundColor = '#F3FDFF'; // 空单元格背景颜色
+				cell.style.color = 'red'; // 空单元格背景颜色
 			}
 		}
 	}
@@ -319,19 +330,18 @@ function startSudoku() {
 /**
  * 给td元素添加事件
  */
-function setNumberButton() {
+function addNumberButtonEvents() {
 	for (var i = 1; i <= 9; i++) {
 		for (var j = 1; j <= 9; j++) {
-			var cell_i_j = eval( "document.getElementsByTagName(\"*\").cell" + i + j );
+			var cell = document.querySelector('#cell' + i + j);
 			// 向表格中填入数字
 			if (userInput[i][j] == true) {
-				cell_i_j.addEventListener('click', function() {
+				cell.addEventListener('click', function() {
 					ndNumberTable.style.display = 'block';
 					ndNumberTable.style.left = (getElementLeft(this) - 12) + 'px';
 					ndNumberTable.style.top = (getElementTop(this) - 12) + 'px';
 					
-					that = this;
-					getTdNumber();
+					currentCell = this;
 				},false);
 			}
 		}
@@ -371,19 +381,21 @@ function getElementTop(element){
 /**
  * 获取Td元素的值
  */
-function getTdNumber() {
+function bindNumberPadEvents() {
 	var divs = document.getElementById('j-number-table').querySelectorAll('div');
 	for (var i = 0; i < divs.length; i++) {
 		divs[i].onclick = function() {
-			that.innerText = this.innerText;
+			if (!currentCell) {
+				return;
+			}
+			currentCell.innerText = this.innerText;
 			ndNumberTable.style.display = 'none';
-			var thatId = that.id;
-			var string1 = thatId.substring(4,5);
-			var string2 = thatId.substring(5);
-			currentState[string1][string2] = this.innerText;
-			console.log(string1,string2);
-			console.log(currentState[string1][string2]);
-			checkFinish(string1,string2);
+			var row = currentCell.id.substring(4,5);
+			var col = currentCell.id.substring(5);
+			currentState[row][col] = this.innerText;
+			console.log(row,col);
+			console.log(currentState[row][col]);
+			checkFinish(row,col);
 		}
 	}
 }
@@ -413,16 +425,19 @@ function checkFinish(x,y) {
 	var rowArray = [];
 	for (var i=0; i<row.cells.length; i++) {
 		if (row.cells[i].innerText != '') {
-			rowArray.push(row.cells[i].innerText);				
+			rowArray.push(row.cells[i].innerText);			
 		}
 	}
 	console.log(rowArray);
 	rowRepeat = isRepeat(rowArray);
+	console.log(rowRepeat);
 
-	if (rowRepeat == true) {
-		row.style.background = '#EEEEEE';
-	} else {
-		row.style.background = '';
+	for (var i=0; i<row.cells.length; i++) {
+		if (rowRepeat == true && row.cells[i].innerText != '') {
+			row.cells[i].style.background = '#EEEEEE';
+		} else {
+			row.cells[i].style.background = '';
+		}
 	}
 
 	var rows = ndSudokuTable.rows;
@@ -483,7 +498,7 @@ function checkFinish(x,y) {
 		}
 	}
 
-	var can;
+	var isConflict;
 	var blockArray = [];
 	var solve;
 	for (var i = 0; i < 9; i++) {
@@ -502,9 +517,9 @@ function checkFinish(x,y) {
 				// 		group[i][k].style.background = '';
 				// 	}
 				// }
-				can = true;
+				isConflict = true;
 			}
-			if (can == true) {
+			if (isConflict == true) {
 				break;
 			}
 		}
@@ -519,8 +534,8 @@ function checkFinish(x,y) {
 		}
 	}
 	if (sudokuArray.length == 81 && rowRepeat == false && colRepeat == false && blockRepeat == false) {
-		stopTime();
-		var string1 = '成功' + timeTransform(time);
+		stopTimer();
+		var string1 = '成功' + formatTime(timeElapsed);
 		var string2 = '确定';
 		displaySudokuRuler(string1, string2);
 	}
@@ -539,9 +554,7 @@ function addSudokuStyle() {
 
 		for (var j = 0; j < row[i].cells.length; j++) {
 			if (j == 2 || j == 5) {
-				row[i].cells[j].style.borderRight = 3 + 'px';
-				row[i].cells[j].style.borderStyle = 'solid';
-				row[i].cells[j].style.borderColor = '#87C7EC';
+				row[i].cells[j].setAttribute('class', 'cellborder');
 			}
 		}
 	}
@@ -551,7 +564,7 @@ function addSudokuStyle() {
  * 播放声音
  */
 function  playSound(source) {
-	if (isPlaySoundInputed == true) {
+	if (isSoundEnabled == true) {
 		ndAudio.setAttribute('src', source);
 	}
 }
