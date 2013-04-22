@@ -21,9 +21,9 @@ for (var i=0, length=dialogButtons.length; i<length; i++) {
 
         for (var key in dialogs) {
             if (key === dialog) {
-                dialogs[key].style.display = 'block;
+                dialogs[key].style.display = 'block';
             } else {
-                dialogs[key].style.display = 'none;
+                dialogs[key].style.display = 'none';
             }
         }
 

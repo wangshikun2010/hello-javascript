@@ -184,7 +184,7 @@ label:hover {
 
 .button {
 	width: 70px;
-	height: 20px;
+	height: 30px;
 	margin: 15px 0 0 0;
 	padding: 5px 0;
 }
@@ -249,11 +249,11 @@ label:hover {
 	}
 }
 
-#new-div {
-	position: absolute;
+.dialog {
+	/*position: absolute;
 	z-index: 9999;
 	left: 300px;
-	top: 150px;
+	top: 150px;*/
 	width: 300px;
 	height: 120px;
 	border-width: 8px;
@@ -267,11 +267,11 @@ label:hover {
 	-webkit-animation-timing-function: ease-out;*/
 }
 
-#new-div:hover {
+.dialog:hover {
 	opacity: 1;
 }
 
-#new-a {
+.dialog-button {
 	display: block;
 	width: 100px;
 	text-align: center;

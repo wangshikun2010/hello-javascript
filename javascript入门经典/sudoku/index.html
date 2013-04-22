@@ -14,16 +14,6 @@
 <div class="sudoku" id="j-sudoku">
 	<div class="sudoku-panel" id="j-sudoku-panel">
 		<table class="sudoku-table" id="j-sudoku-table">
-		<script type="text/javascript">
-		// TODO 把下面的js代码移动到js文件
-		for (var i=1; i<=9; i++) {
-			document.write("<tr>");
-			for (var j=1; j<=9; j++) {
-				document.write("<td " + "id=cell"+i+j+"></td>");
-			}
-			document.write("</tr>");
-		}
-		</script>
 		</table>
 	</div>
 	<div class="control-panel" id="j-control-panel">
@@ -45,11 +35,11 @@
 				<label for="radio3">困难</label>
 			</p>
 		</div>
-		<p class="block sudoku-start" id="j-sudoku-start">开始游戏</p>
-		<p class="block button" id="j-sudoku-pause">暂停</p>
-		<p class="block button" id="j-sudoku-clear">全部清空</p>
-		<p class="block button" id="j-sudoku-help">帮助</p>
-		<p class="block button" id="j-sudoku-rule">游戏规则</p>
+		<input type="button" class="block sudoku-start" id="j-btn-start" data-dialog="start" value="START" />
+		<input type="button" class="block button" id="j-btn-pause" data-dialog="pause" value="PAUSE" />
+		<input type="button" class="block button" id="j-btn-clear" data-dialog="clear" value="CLEAR" />
+		<input type="button" class="block button" id="j-btn-help" data-dialog="help" value="HELP" />
+		<input type="button" class="block button" id="j-btn-rule" data-dialog="rule" value="RULE" />
 	</div>
 </div>
 <audio id="j-audio" src="" autoplay="true" loop></audio>
@@ -63,6 +53,20 @@
 	<div>7</div>
 	<div>8</div>
 	<div>9</div>
+</div>
+<div class="block dialog" id="j-rule">
+	<p>
+		用1至9之间的数字填满空格，一个格子只能填入一个数字,即每个数字在每一行、每一列和每一区只能出现一次
+	</p>
+	<a href="#" class="block dialog-button">我知道了</a>
+</div>
+<div class="block dialog" id="j-pause">
+	<p>暂停</p>
+	<a href="#" class="block dialog-button">继续</a>
+</div>
+<div class="block dialog" id="j-seccess">
+	<p>成功</p>
+	<a href="#" class="block dialog-button">确定</a>
 </div>
 </body>
 </html>

@@ -4,23 +4,25 @@ var isSoundEnabled, // 播放状态
 	isAClick, 		// 点击确定
 	currentCell; 	// 获取当前点击元素
 
-var timeElapsed = 0; // 计时
-var timer;
+// 计时
+var timeElapsed = 0,
+	timer;
 
 // 元素节点名称
 var ndSudoku,
 	ndSudokuPanel,
 	ndSudokuTable,
 	ndSudokuTime,
-	ndSudokuStart,
-	ndSudokuPause,
-	ndSudokuClear,
-	ndSudokuHelp,
-	ndSudokuRule,
 	ndAudio,
 	ndSound,
 	ndLabelSound,
 	ndNumberTable;
+var	ndButtonStart,
+	ndButtonPause,
+	ndButtonClear,
+	ndButtonHelp,
+	ndButtonRule;
+
 
 var currentState = [], 	// 记录当前矩阵情况
 	userInput = [], 	// 记录那些单元格是要用户输入的
@@ -33,7 +35,6 @@ window.onload = function() {
 	isAClick = false;
 
 	getNodes();
-	addSudokuStyle();
 	ndSound.addEventListener('click', changeSoundMode, false);
 
 	// TODO 隐藏九宫格的逻辑存在问题
@@ -45,7 +46,7 @@ window.onload = function() {
 	}
 
 	// TODO 整理对话框,把弹框的代码放在html
-	ndSudokuRule.onclick = function() {
+	ndButtonRule.onclick = function() {
 		if ((isDialogOpen == true && isAClick == true) || isDialogOpen == false) {
 			var string1 = "用1至9之间的数字填满空格，一个格子只能填入一个数字,即每个数字在每一行、每一列和每一区只能出现一次";
 			var string2 = "我知道了";
@@ -54,7 +55,7 @@ window.onload = function() {
 			return;
 		}
 	}
-	ndSudokuPause.onclick = function() {
+	ndButtonPause.onclick = function() {
 		if ((isDialogOpen == true && isAClick == true) || isDialogOpen == false) {
 			var string1 = '暂停';
 			var string2 = '继续';
@@ -66,13 +67,15 @@ window.onload = function() {
 	}
 
 	// TODO radio:checked, getDiffculty()
-	ndSudokuStart.onclick = function() {
+	ndButtonStart.onclick = function() {
 		var radios = document.getElementsByName('radio');
 		for (var i=0; i<radios.length; i++) {
 			if (radios[i].checked) {
 				gameDifficult = radios[i].value;
 			}
 		}
+		createSudokuTable(ndSudokuTable);
+		addSudokuStyle();
 		startSudoku();
 		startTimer(true);
 		addNumberButtonEvents();
@@ -91,18 +94,71 @@ function getNodes() {
 	ndSudokuPanel = document.getElementById('j-sudoku-panel');
 	ndSudokuTable = document.getElementById('j-sudoku-table');
 	ndSudokuTime = document.getElementById('j-sudoku-time');
-	ndSudokuStart = document.getElementById('j-sudoku-start');
-	ndSudokuPause = document.getElementById('j-sudoku-pause');
-	ndSudokuClear = document.getElementById('j-sudoku-clear');
-	ndSudokuHelp = document.getElementById('j-sudoku-help');
-	ndSudokuRule = document.getElementById('j-sudoku-rule');
 	ndAudio = document.getElementById('j-audio');
 	ndSound = document.getElementById('j-sound');
 	ndLabelSound = document.getElementById('j-label-sound');
-	ndNumberTable = document.getElementById('j-number-table');	
+	ndNumberTable = document.getElementById('j-number-table');
+
+	ndButtonStart = document.getElementById('j-btn-start');
+	ndButtonPause = document.getElementById('j-btn-pause');
+	ndButtonClear = document.getElementById('j-btn-clear');
+	ndButtonHelp = document.getElementById('j-btn-help');
+	ndButtonRule = document.getElementById('j-btn-rule');
 }
 
+/**
+ * 创建数独table
+ */
+function createSudokuTable(parent) {
+	removeChildren(parent);
+	for (var i=1; i<=9; i++) {
+		var tr = document.createElement('tr');
+		for (var j=1; j<=9; j++) {
+			var cell = document.createElement('td');
+			cell.id = 'cell' + i + j;
+			tr.appendChild(cell);
+		}
+		parent.appendChild(tr);
+	}
+}
 
+/**
+* 删除父节点下的所有子节点
+*/
+function removeChildren(parentnode) {
+	var childs = parentnode.childNodes;
+	// 此处循环必须这样写,不然会报错
+	for (var i=childs.length-1; i>=0; i--) {
+		parentnode.removeChild(childs[i]);
+	}
+}
+
+/**
+ * 获取点击对象
+ */
+function getClickButton() {
+	var dialogs = {
+		pause: ndButtonPause,
+		help: ndButtonHelp,
+		rule: ndButtonRule
+	};
+
+	var dialogButtons = document.querySelectorAll('#j-btn-pause, #j-btn-help, #j-btn-rule');
+	for (var i=0, length=dialogButtons.length; i<length; i++) {
+		dialogButtons[i].addEventListener('click', function (event) {
+			var dialog = this.getAttribute('data-dialog');
+
+			for (var key in dialogs) {
+				if (key === dialog) {
+					dialogs[key].style.display = 'block';
+				} else {
+					dialogs[key].style.display = 'none';
+				}
+			}
+
+		}, false);
+	}
+}
 
 /**
  * 显示对话框
