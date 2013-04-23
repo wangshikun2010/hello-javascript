@@ -25,7 +25,7 @@
 		<div class="block sudoku-difficulty" id="j-sudoku-difficulty">
 			<p class="difficulty-title">游戏难度</p>
 			<p class="difficulty" id="j-difficulty">
-				<input type="radio" name="radio" id="radio1" value="0.8" checked="checked" />
+				<input type="radio" name="radio" id="radio1" value="0.9" checked="checked" />
 				<label for="radio1">简单</label>
 
 				<input type="radio" name="radio" id="radio2" value="0.5" />
@@ -42,7 +42,6 @@
 		<input type="button" class="block button" id="j-btn-rule" data-dialog="rule" value="RULE" />
 	</div>
 </div>
-<audio id="j-audio" src="" autoplay="true" loop></audio>
 <div class="number-table" id="j-number-table">
 	<div>1</div>
 	<div>2</div>
@@ -54,19 +53,20 @@
 	<div>8</div>
 	<div>9</div>
 </div>
-<div class="block dialog" id="j-rule">
+<div class="block dialog" id="j-sudoku-rule">
 	<p>
 		用1至9之间的数字填满空格，一个格子只能填入一个数字,即每个数字在每一行、每一列和每一区只能出现一次
 	</p>
-	<a href="#" class="block dialog-button">我知道了</a>
+	<a href="javascript:void(0)" class="block dialog-button" id="j-know">我知道了</a>
 </div>
-<div class="block dialog" id="j-pause">
+<div class="block dialog" id="j-sudoku-pause">
 	<p>暂停</p>
-	<a href="#" class="block dialog-button">继续</a>
+	<a href="javascript:void(0)" class="block dialog-button" id="j-continue">继续</a>
 </div>
-<div class="block dialog" id="j-seccess">
-	<p>成功</p>
-	<a href="#" class="block dialog-button">确定</a>
+<div class="block dialog" id="j-sudoku-seccess">
+	<p>成功: 用时<span id="j-game-time"></span></p>
+	<a href="javascript:void(0)" class="block dialog-button" id="j-ok">确定</a>
 </div>
+<audio id="j-audio" src="" autoplay="true" loop></audio>
 </body>
 </html>
