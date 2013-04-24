@@ -29,7 +29,6 @@ var ndSudokuKnow,
 	ndSudokuOk;
 var ndGameTime;
 
-
 var currentState = [], 	// 记录当前矩阵情况
 	userInput = [], 	// 记录那些单元格是要用户输入的
 	initialState = []; 	// 程序生成的矩阵的初始状态
@@ -41,25 +40,8 @@ window.onload = function() {
 	isStartGame = false;
 
 	getNodes();
-	ndSound.addEventListener('click', changeSoundMode, false);
-
-	// TODO 隐藏九宫格的逻辑存在问题
-	document.onclick = function() {
-		var clickTag = event.srcElement;
-		if (clickTag.tagName.toLowerCase() != "td") {
-			ndNumberTable.style.display = 'none';
-		}
-		for (var i = 1; i <= 9; i++) {
-			for (var j = 1; j <= 9; j++) {
-				var cell = document.querySelector('#cell' + i + j);
-				if (userInput[i][j] == false) {
-					cell.addEventListener('click', function() {
-						ndNumberTable.style.display = 'none';
-					},false);
-				}
-			}
-		}
-	}
+	addEventHandler(ndSound, 'click', changeSoundMode);
+	// playSound('./sound/a.ogg');
 	
 	ndButtonRule.onclick = function() {
 		if (isStartGame == false) {
@@ -92,7 +74,23 @@ window.onload = function() {
 		addNumberButtonEvents();
 		bindNumberPadEvents();
 		setClickButton();
-		// playSound('./sound/a.mp3');
+
+		document.onclick = function() {
+			var clickTag = event.srcElement;
+			if (clickTag.tagName.toLowerCase() != "td") {
+				ndNumberTable.style.display = 'none';
+			}
+			for (var i = 1; i <= 9; i++) {
+				for (var j = 1; j <= 9; j++) {
+					var cell = document.querySelector('#cell' + i + j);
+					if (userInput[i][j] == false) {
+						addEventHandler(cell, 'click', function() {
+							ndNumberTable.style.display = 'none';
+						});
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -214,7 +212,7 @@ function setClickButton() {
 
 	var dialogButtons = document.querySelectorAll('#j-btn-pause, #j-btn-rule');
 	for (var i=0, length=dialogButtons.length; i<length; i++) {
-		dialogButtons[i].addEventListener('click', function (event) {
+		addEventHandler(dialogButtons[i], 'click', function (event) {
 			var dialog = this.getAttribute('data-dialog');
 			
 			for (var key in dialogs) {
@@ -230,7 +228,7 @@ function setClickButton() {
 				}
 			}
 
-		}, false);
+		});
 	}
 }
 
@@ -442,12 +440,12 @@ function addNumberButtonEvents() {
 			var cell = document.querySelector('#cell' + i + j);
 			// 向表格中填入数字
 			if (userInput[i][j] == true) {
-				cell.addEventListener('click', function() {
+				addEventHandler(cell, 'click', function() {
 					ndNumberTable.style.display = 'block';
 					ndNumberTable.style.left = (getElementLeft(this) - 12) + 'px';
 					ndNumberTable.style.top = (getElementTop(this) - 12) + 'px';
 					currentCell = this;
-				},false);
+				});
 			}
 		}
 	}
@@ -662,10 +660,23 @@ function deleteNumberButtonEvents() {
 		for (var j = 1; j <= 9; j++) {
 			var cell = document.querySelector('#cell' + i + j);
 			if (userInput[i][j] == true) {
-				cell.addEventListener('click', function() {
+				addEventHandler(cell, 'click', function() {
 					ndNumberTable.style.display = 'none';
-				},false);
+				});
 			}
 		}
+	}
+}
+
+/**
+ * 添加事件监听
+ */
+function addEventHandler(oTarget, sEventType, fnHandler){
+	if (oTarget.addEventListener) {//非IE
+		oTarget.addEventListener(sEventType, fnHandler, false);
+	} else if (oTarget.attachEvent) {//IE
+		oTarget.attachEvent('on' + sEventType, fnHandler);
+	} else {
+		oTarget['on' + sEventType] = fnHandler;
 	}
 }
