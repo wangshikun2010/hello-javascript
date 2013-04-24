@@ -40,8 +40,14 @@ window.onload = function() {
 	isStartGame = false;
 
 	getNodes();
+	ndSound.checked = false;
 	addEventHandler(ndSound, 'click', changeSoundMode);
-	// playSound('./sound/a.ogg');
+	var BrowserInfo = getBrowserInfo();
+	if (BrowserInfo.Browser == "ie" && BrowserInfo.Version > 6) {
+		playSound('./sound/a.mp3');
+	} else {
+		playSound('./sound/a.ogg');
+	}
 	
 	ndButtonRule.onclick = function() {
 		if (isStartGame == false) {
@@ -75,7 +81,7 @@ window.onload = function() {
 		bindNumberPadEvents();
 		setClickButton();
 
-		document.onclick = function() {
+		document.body.onclick = function() {
 			var clickTag = event.srcElement;
 			if (clickTag.tagName.toLowerCase() != "td") {
 				ndNumberTable.style.display = 'none';
@@ -91,7 +97,44 @@ window.onload = function() {
 				}
 			}
 		}
+
+		document.body.onblur = function() {
+			stopTimer();
+		}
+
+		document.body.onfocus = function() {
+			startTimer(false);
+		}
 	}
+}
+
+/**
+ * 获取浏览器类型和版本号
+ */
+function getBrowserInfo() {
+	var BrowserInfo = {};
+	this.Browser = "";
+	this.Version = "";
+	var ua = navigator.userAgent.toLowerCase();
+
+	if (ua.match(/msie/i) != null) {
+		this.Version = ua.match(/msie ([\d.]+)/)[1];
+		this.Browser = "ie";
+	} else if (ua.match(/firefox/i) != null) {
+		this.Version = ua.match(/firefox\/([\d.]+)/)[1];
+		this.Browser = "firefox";
+	} else if (ua.match(/chrome/i) != null) {
+		this.Version = ua.match(/chrome\/([\d.]+)/)[1];
+		this.Browser = "chrome";
+	} else if (ua.match(/opera/i) != null) {
+		this.Version = ua.match(/opera.([\d.]+)/)[1];
+		this.Browser = "opera";
+	} else if (ua.match(/safari/i)!=null) {
+		//放到后面判断也是因为Chrome的userAgent还包含了Safari的特征
+		this.Version = ua.match(/version\/([\d.]+)/)[1];
+		this.Browser = "safari";
+	}
+	return this;
 }
 
 /**
@@ -185,7 +228,7 @@ function addSudokuStyle() {
  * 播放声音
  */
 function  playSound(source) {
-	if (isSoundEnabled == true) {
+	if (isSoundEnabled == true && !ndSound.checked) {
 		ndAudio.setAttribute('src', source);
 	}
 }
