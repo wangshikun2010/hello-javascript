@@ -40,13 +40,14 @@ window.onload = function() {
 	isStartGame = false;
 
 	getNodes();
+	ndSudokuTable.style.background = 'url(./images/a95.jpg) -10px -235px';
 	ndSound.checked = false;
 	addEventHandler(ndSound, 'click', changeSoundMode);
 	var BrowserInfo = getBrowserInfo();
 	if (BrowserInfo.Browser == "ie" && BrowserInfo.Version > 6) {
-		playSound('./sound/a.mp3');
+		// playSound('./sound/a.mp3');
 	} else {
-		playSound('./sound/a.ogg');
+		// playSound('./sound/a.ogg');
 	}
 	
 	ndButtonRule.onclick = function() {
@@ -69,6 +70,7 @@ window.onload = function() {
 			}
 		} else {
 			isStartGame = true;
+			ndSudokuTable.style.background = '';
 			ndSudokuRule.style.display = 'none';
 			startTimer(false);
 		}
@@ -81,8 +83,8 @@ window.onload = function() {
 		bindNumberPadEvents();
 		setClickButton();
 
-		document.body.onclick = function() {
-			var clickTag = event.srcElement;
+		document.body.onclick = function(event) {
+			var clickTag = event.srcElement ? event.srcElement : event.target;
 			if (clickTag.tagName.toLowerCase() != "td") {
 				ndNumberTable.style.display = 'none';
 			}
@@ -105,6 +107,7 @@ window.onload = function() {
 		document.body.onfocus = function() {
 			startTimer(false);
 		}
+
 	}
 }
 
@@ -188,6 +191,7 @@ function createSudokuTable(parent) {
 		var tr = document.createElement('tr');
 		for (var j=1; j<=9; j++) {
 			var cell = document.createElement('td');
+			var div = 
 			cell.id = 'cell' + i + j;
 			tr.appendChild(cell);
 		}
@@ -257,15 +261,24 @@ function setClickButton() {
 	for (var i=0, length=dialogButtons.length; i<length; i++) {
 		addEventHandler(dialogButtons[i], 'click', function (event) {
 			var dialog = this.getAttribute('data-dialog');
-			
+			var sudokuTablechilds = ndSudokuTable.childNodes;
+
 			for (var key in dialogs) {
 				if (key === dialog) {
 					if (dialog == 'pause') {
 						stopTimer();
 						ndSudokuPause.style.display = 'block';
+						for (var i=0; i<sudokuTablechilds.length; i++) {
+							sudokuTablechilds[i].style.visibility = 'hidden';
+						}
+						ndSudokuTable.style.background = 'url(./images/a95.jpg) -10px -235px';
 						ndSudokuContinue.onclick = function() {
 							startTimer(false);
 							ndSudokuPause.style.display = 'none';
+							for (var i=0; i<sudokuTablechilds.length; i++) {
+								sudokuTablechilds[i].style.visibility = 'visible';
+							}
+							ndSudokuTable.style.background = '';
 						}
 					}
 				}
@@ -461,14 +474,12 @@ function startSudoku() {
 				// 已填充的单元格
 				cell.innerText = initialState[i][j];
 				currentState[i][j] = initialState[i][j];
-				cell.style.backgroundColor = '#FFFFFF';
 				cell.style.color = '#000000';
 			} else {
 				// 未填充的单元格
 				cell.innerText = "";
 				userInput[i][j] = true;
-				cell.style.backgroundColor = '#F3FDFF';
-				cell.style.color = 'red';
+				cell.style.color = '#2A83D6';
 			}
 		}
 	}
@@ -538,9 +549,6 @@ function bindNumberPadEvents() {
 			ndNumberTable.style.display = 'none';
 			var row = currentCell.id.substring(4,5);
 			var col = currentCell.id.substring(5);
-			currentState[row][col] = this.innerText;
-			console.log(row,col);
-			console.log(currentState[row][col]);
 			checkFinish(row,col);
 		}
 	}
@@ -553,34 +561,19 @@ function checkFinish(x,y) {
 	var rowRepeat;
 	var colRepeat;
 	var blockRepeat;
-	
-	// 验证重复元素，有重复返回true；否则返回false
-	function isRepeat(arr) {
-		var hash = {};
-		for (var i in arr) {
-			if (hash[arr[i]]) {
-				return true;
-			}
-			// 不存在该元素，则赋值为true，可以赋任意值，相应的修改if判断条件即可
-			hash[arr[i]] = true;
-		}
-		return false;
-	}
 
 	var row = ndSudokuTable.rows[x - 1];
 	var rowArray = [];
 	for (var i=0; i<row.cells.length; i++) {
 		if (row.cells[i].innerText != '') {
-			rowArray.push(row.cells[i].innerText);			
+			rowArray.push(row.cells[i].innerText);	
 		}
 	}
-	console.log(rowArray);
 	rowRepeat = isRepeat(rowArray);
-	console.log(rowRepeat);
 
 	for (var i=0; i<row.cells.length; i++) {
-		if (rowRepeat == true && row.cells[i].innerText != '') {
-			row.cells[i].style.background = '#EEEEEE';
+		if (rowRepeat == true) {
+			row.cells[i].style.background = '#F05032';
 		} else {
 			row.cells[i].style.background = '';
 		}
@@ -595,14 +588,13 @@ function checkFinish(x,y) {
 			}
 		}
 	}
-	console.log(colArray);
 	colRepeat = isRepeat(colArray);
 
 	for (var i=0; i<rows.length; i++) {
 		for (var j=0; j<rows[i].cells.length; j++) {
-			if ((j == y-1) && (rows[i].cells[j].innerText != '') && (i != x - 1)) {
+			if (j == y-1) {
 				if (colRepeat == true) {
-					rows[i].cells[j].style.background = '#EEEEEE';
+					rows[i].cells[j].style.background = '#F05032';
 				} else {
 					rows[i].cells[j].style.background = '';
 				}
@@ -646,23 +638,20 @@ function checkFinish(x,y) {
 
 	var isConflict;
 	var blockArray = [];
-	var solve;
 	for (var i = 0; i < 9; i++) {
 		for (var j=0; j<group[i].length; j++) {
 			if (group[i][j].id == 'cell'+ x + y) {
-				console.log(group[i]);
 				for (var k=0; k<group[i].length; k++) {
 					blockArray.push(group[i][k].innerText);
 				}
-				console.log(blockArray);
 				blockRepeat = isRepeat(blockArray);
-				// for (var k=0; k<group[i].length; k++) {
-				// 	if ((blockRepeat == true) && group[i][k].innerText != '' && group[i][k].id != 'cell'+ x + y) {
-				// 		group[i][k].style.background = '#EEEEEE';
-				// 	} else {
-				// 		group[i][k].style.background = '';
-				// 	}
-				// }
+				for (var k=0; k<group[i].length; k++) {
+					if (blockRepeat == true) {
+						group[i][k].style.background = '#F05032';
+					} else {
+						group[i][k].style.background = '';
+					}
+				}
 				isConflict = true;
 			}
 			if (isConflict == true) {
@@ -693,6 +682,21 @@ function checkFinish(x,y) {
 			isStartGame = false;
 		}
 	}
+}
+
+/**
+ * 验证元素是否重复
+ */
+function isRepeat(array) {
+	var hash = {};
+	for (var i in array) {
+		if (hash[array[i]]) {
+			return true;
+		}
+		// 不存在该元素，则赋值为true，可以赋任意值，相应的修改if判断条件即可
+		hash[array[i]] = true;
+	}
+	return false;
 }
 
 /**

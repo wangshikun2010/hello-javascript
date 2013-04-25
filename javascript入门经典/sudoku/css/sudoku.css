@@ -39,7 +39,7 @@
 }
 
 .sudoku-table td:hover {
-	background: #FFFFFF;
+	background: #CFFDFF;
 }
 
 
@@ -211,7 +211,6 @@ label:hover {
 	opacity: 1;
 	border: 1px solid #FF5400;
 	border-radius: 5px;
-	padding: 1px;
 	display: none;
 	-webkit-animation-name: mytable;
 	-webkit-animation-duration: 0.2s;
