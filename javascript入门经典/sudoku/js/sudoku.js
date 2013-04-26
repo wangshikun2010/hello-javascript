@@ -45,9 +45,9 @@ window.onload = function() {
 	addEventHandler(ndSound, 'click', changeSoundMode);
 	var BrowserInfo = getBrowserInfo();
 	if (BrowserInfo.Browser == "ie" && BrowserInfo.Version > 6) {
-		// playSound('./sound/a.mp3');
+		playSound('./sound/a.mp3');
 	} else {
-		// playSound('./sound/a.ogg');
+		playSound('./sound/a.ogg');
 	}
 	
 	ndButtonRule.onclick = function() {
@@ -99,15 +99,14 @@ window.onload = function() {
 				}
 			}
 		}
+		
+		// document.body.onblur = function() {
+		// 	stopTimer();
+		// }
 
-		document.body.onblur = function() {
-			stopTimer();
-		}
-
-		document.body.onfocus = function() {
-			startTimer(false);
-		}
-
+		// document.body.onfocus = function() {
+		// 	startTimer(false);
+		// }
 	}
 }
 
@@ -252,35 +251,43 @@ function changeSoundMode() {
  * 获取点击对象
  */
 function setClickButton() {
-	var dialogs = {
-		pause: ndSudokuPause,
-		rule: ndSudokuRule
-	};
-
-	var dialogButtons = document.querySelectorAll('#j-btn-pause, #j-btn-rule');
+	var dialogButtons = document.querySelectorAll('#j-btn-pause, #j-btn-clear');
 	for (var i=0, length=dialogButtons.length; i<length; i++) {
 		addEventHandler(dialogButtons[i], 'click', function (event) {
 			var dialog = this.getAttribute('data-dialog');
 			var sudokuTablechilds = ndSudokuTable.childNodes;
 
-			for (var key in dialogs) {
-				if (key === dialog) {
-					if (dialog == 'pause') {
-						stopTimer();
-						ndSudokuPause.style.display = 'block';
-						for (var i=0; i<sudokuTablechilds.length; i++) {
-							sudokuTablechilds[i].style.visibility = 'hidden';
-						}
-						ndSudokuTable.style.background = 'url(./images/a95.jpg) -10px -235px';
-						ndSudokuContinue.onclick = function() {
-							startTimer(false);
-							ndSudokuPause.style.display = 'none';
-							for (var i=0; i<sudokuTablechilds.length; i++) {
-								sudokuTablechilds[i].style.visibility = 'visible';
+			if (dialog == 'pause') {
+				stopTimer();
+				ndSudokuPause.style.display = 'block';
+				for (var i=0; i<sudokuTablechilds.length; i++) {
+					sudokuTablechilds[i].style.visibility = 'hidden';
+				}
+				ndSudokuTable.style.background = 'url(./images/a95.jpg) -10px -235px';
+				ndSudokuContinue.onclick = function() {
+					startTimer(false);
+					ndSudokuPause.style.display = 'none';
+					for (var i=0; i<sudokuTablechilds.length; i++) {
+						sudokuTablechilds[i].style.visibility = 'visible';
+					}
+					ndSudokuTable.style.background = '';
+				}
+			} else if (dialog == 'clear') {
+				var restartGame = confirm('你确定要清空所有填写吗？');
+				if (restartGame) {
+					for (var i = 1; i <= 9; i++) {
+						for (var j = 1; j <= 9; j++) {
+							var cell = document.querySelector('#cell' + i + j);
+							if (userInput[i][j] == true) {
+								cell.innerText = '';
+								cell.style.background = '';
+							} else {
+								cell.style.background = '';
 							}
-							ndSudokuTable.style.background = '';
 						}
 					}
+				} else {
+					return;
 				}
 			}
 
@@ -642,7 +649,9 @@ function checkFinish(x,y) {
 		for (var j=0; j<group[i].length; j++) {
 			if (group[i][j].id == 'cell'+ x + y) {
 				for (var k=0; k<group[i].length; k++) {
-					blockArray.push(group[i][k].innerText);
+					if (group[i][k].innerText.innerText != '') {
+						blockArray.push(group[i][k].innerText);						
+					}
 				}
 				blockRepeat = isRepeat(blockArray);
 				for (var k=0; k<group[i].length; k++) {
@@ -677,6 +686,11 @@ function checkFinish(x,y) {
 		// 单元格设置为不可编辑状态
 		deleteNumberButtonEvents();
 		ndSudokuSeccess.style.display = 'block';
+		ndButtonStart.onclick = function() {
+			if (isStartGame) {
+				return false;
+			}	
+		}
 		ndSudokuOk.onclick = function() {
 			ndSudokuSeccess.style.display = 'none';
 			isStartGame = false;
