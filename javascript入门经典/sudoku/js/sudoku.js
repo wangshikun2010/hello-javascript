@@ -5,7 +5,7 @@ var isSoundEnabled, // 播放状态
 // 计时
 var timeElapsed = 0,
 	timer,
-	newTime;
+	isSeccessOk;
 
 // 元素节点名称
 var ndSudoku,
@@ -45,9 +45,9 @@ window.onload = function() {
 	addEventHandler(ndSound, 'click', changeSoundMode);
 	var BrowserInfo = getBrowserInfo();
 	if (BrowserInfo.Browser == "ie" && BrowserInfo.Version > 6) {
-		playSound('./sound/a.mp3');
+		// playSound('./sound/a.mp3');
 	} else {
-		playSound('./sound/a.ogg');
+		// playSound('./sound/a.ogg');
 	}
 	
 	ndButtonRule.onclick = function() {
@@ -60,11 +60,16 @@ window.onload = function() {
 	}
 
 	ndButtonStart.onclick = function() {
+		if (isSeccessOk) {
+			return;
+		}
 		if (isStartGame == true) {
 			var newGame = confirm('你确定要重新开始游戏吗？');
 			if (newGame) {
+				ndSudokuTable.style.background = '';
 				ndSudokuPause.style.display = 'none';
-				startTimer(true);
+				timeElapsed = 0;
+				startTimer();
 			} else {
 				return;
 			}
@@ -72,7 +77,7 @@ window.onload = function() {
 			isStartGame = true;
 			ndSudokuTable.style.background = '';
 			ndSudokuRule.style.display = 'none';
-			startTimer(false);
+			startTimer();
 		}
 
 		getGameDiffculty();
@@ -100,13 +105,15 @@ window.onload = function() {
 			}
 		}
 		
-		// document.body.onblur = function() {
-		// 	stopTimer();
-		// }
+		document.body.onblur = function() {
+			console.log(timeElapsed);
+			stopTimer();
+		}
 
-		// document.body.onfocus = function() {
-		// 	startTimer(false);
-		// }
+		document.body.onfocus = function() {
+			console.log(timeElapsed);
+			startTimer();
+		}
 	}
 }
 
@@ -190,7 +197,6 @@ function createSudokuTable(parent) {
 		var tr = document.createElement('tr');
 		for (var j=1; j<=9; j++) {
 			var cell = document.createElement('td');
-			var div = 
 			cell.id = 'cell' + i + j;
 			tr.appendChild(cell);
 		}
@@ -256,8 +262,11 @@ function setClickButton() {
 		addEventHandler(dialogButtons[i], 'click', function (event) {
 			var dialog = this.getAttribute('data-dialog');
 			var sudokuTablechilds = ndSudokuTable.childNodes;
-
+			
 			if (dialog == 'pause') {
+				if (isSeccessOk) {
+					return;
+				}
 				stopTimer();
 				ndSudokuPause.style.display = 'block';
 				for (var i=0; i<sudokuTablechilds.length; i++) {
@@ -265,7 +274,7 @@ function setClickButton() {
 				}
 				ndSudokuTable.style.background = 'url(./images/a95.jpg) -10px -235px';
 				ndSudokuContinue.onclick = function() {
-					startTimer(false);
+					startTimer();
 					ndSudokuPause.style.display = 'none';
 					for (var i=0; i<sudokuTablechilds.length; i++) {
 						sudokuTablechilds[i].style.visibility = 'visible';
@@ -273,6 +282,9 @@ function setClickButton() {
 					ndSudokuTable.style.background = '';
 				}
 			} else if (dialog == 'clear') {
+				if (isSeccessOk) {
+					return;
+				}
 				var restartGame = confirm('你确定要清空所有填写吗？');
 				if (restartGame) {
 					for (var i = 1; i <= 9; i++) {
@@ -286,6 +298,7 @@ function setClickButton() {
 							}
 						}
 					}
+					return; //兼容chrome
 				} else {
 					return;
 				}
@@ -333,11 +346,7 @@ function formatTime(number) {
 /**
  * 开始计时
  */
-function startTimer(isReset) {
-	if (isReset) {
-		newTime = true;
-		stopTimer();
-	}
+function startTimer() {
 	ndSudokuTime.innerText = formatTime(timeElapsed);
 	timeElapsed = timeElapsed + 1;
 	timer = setTimeout('startTimer()',1000);
@@ -347,9 +356,6 @@ function startTimer(isReset) {
  * 停止计时
  */
 function stopTimer() {
-	if (newTime) {
-		timeElapsed = 0;
-	}
 	clearTimeout(timer);
 }
 
@@ -649,8 +655,8 @@ function checkFinish(x,y) {
 		for (var j=0; j<group[i].length; j++) {
 			if (group[i][j].id == 'cell'+ x + y) {
 				for (var k=0; k<group[i].length; k++) {
-					if (group[i][k].innerText.innerText != '') {
-						blockArray.push(group[i][k].innerText);						
+					if (group[i][k].innerText != '') {
+						blockArray.push(group[i][k].innerText);
 					}
 				}
 				blockRepeat = isRepeat(blockArray);
@@ -680,20 +686,26 @@ function checkFinish(x,y) {
 	if (sudokuArray.length == 81 && rowRepeat == false && colRepeat == false && blockRepeat == false) {
 		// 游戏成功时停止计时并显示时间
 		stopTimer();
+		console.log(timeElapsed);
 		var gameTime = formatTime(timeElapsed);
 		ndGameTime.innerText = gameTime;
 
 		// 单元格设置为不可编辑状态
 		deleteNumberButtonEvents();
+		isSeccessOk = true;
 		ndSudokuSeccess.style.display = 'block';
-		ndButtonStart.onclick = function() {
-			if (isStartGame) {
-				return false;
-			}	
-		}
 		ndSudokuOk.onclick = function() {
 			ndSudokuSeccess.style.display = 'none';
+			timeElapsed = 0;
+			ndSudokuTime.innerText = formatTime(timeElapsed);
+			stopTimer();
 			isStartGame = false;
+			isSeccessOk = false;
+			var sudokuTablechilds = ndSudokuTable.childNodes;
+			for (var i=0; i<sudokuTablechilds.length; i++) {
+				sudokuTablechilds[i].style.visibility = 'hidden';
+			}
+			ndSudokuTable.style.background = 'url(./images/a95.jpg) -10px -235px';
 		}
 	}
 }
