@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>清除浮动</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<style type="text/css">
+	.demo {
+        width: 300px;
+        border: 1px solid red;
+    }
+    .demoFloat {
+        background: green;
+        margin: 0;
+    }
+    .demoC {
+        background: orange;
+    }
+    .demoD {
+        background: lime;
+        border: 2px solid blue;
+    }
+    .demoB {
+        float: left;
+    }
+    .demoC {
+       float: right;
+    }
+    .demoD {
+       float: left;
+    }
+    /*.clear {
+    	clear: both;
+        height: 0;
+        line-height: 0;
+        font-size: 0;
+    }*/
+
+    /*.A {
+        overflow: hidden;
+        zoom: 1;*//*在ＩＥ下触发其layout，也要以使用_height:1%来代替zoom*/
+    /*}*/
+
+    /*.A {
+        o\verflow: auto;*//*除ＩＥ6以及其以下版本不识别之外，其他浏览器都识别*/
+    /*}*/
+    /** html .A {
+        height: 1%; *//* IE5-6 */
+    /*}*/
+
+    /*.clearfix:before,
+    .clearfix:after {
+        content: ".";
+        display: block;
+        height: 0;
+        visibility: hidden;
+    }
+    .clearfix:after {clear: both;}*/
+    /*.clearfix {zoom: 1;} *//* IE < 8 */
+
+    .clearfix:before,
+    .clearfix:after {
+        content:"";
+        display:table;
+    }
+    .clearfix:after {
+        clear:both;
+        overflow:hidden;
+    }
+    .clearfix {
+        zoom:1; /* IE < 8 */
+    }
+</style>
+</head>
+<body>
+    <div class="demo A clearfix">
+        <div class="demoB demoFloat">float left</div>
+        <div class="demoC demoFloat">float right</div>
+        <div class="demoD demoFloat">not float</div>
+        <!-- <div class="clear"></div> -->
+    </div>
+</body>
+</html>
