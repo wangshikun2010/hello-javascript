@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>将构造函数当做函数</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	function Person(name, age, job) {
+		this.name = name;
+		this.age = age;
+		this.job = job;
+
+		this.sayName = function() {
+			alert(this.name);
+		}
+	}
+
+	var person1 = new Person('wang kun', 20, 'man');
+	person1.sayName();
+
+	Person('han kun', 22, 'man');
+	window.sayName();
+
+	var o = new Object();
+	Person.call(o, 'zhang san', '23', 'man');
+	o.sayName();
+</script>
+</head>
+<body>
+    
+</body>
+</html>

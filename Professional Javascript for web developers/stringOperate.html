@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>string</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	var string = 'hello world';
+	console.log(string.valueOf());
+	console.log(string.toString());
+	console.log(string.valueOf() == string.toString());
+
+	console.log(string.charAt(1));
+	console.log(string.charCodeAt(1));
+
+	console.log(string.concat(' good'));
+	console.log(string.concat(' ' + string));
+	console.log(string + ' ' + string);
+
+	console.log(string.indexOf('r'));
+	console.log(string.indexOf('r', 6));
+	console.log(string.lastIndexOf('hello'));
+	console.log(string.lastIndexOf('world', -7));
+
+	console.log(string.localeCompare('a'));
+	console.log(string.localeCompare('z'));
+	console.log(string.localeCompare('hello world'));
+
+	console.log(string.slice(3));
+	console.log(string.substring(3));
+	console.log(string.slice(3, 7));
+	console.log(string.substring(3, 7));
+	console.log(string.substr(3, 7));
+	console.log(string.slice(-3));
+	console.log(string.substring(-3));
+	console.log(string.slice(3, -4));
+	console.log(string.substring(3, -4));
+
+	console.log(string.toUpperCase());
+	console.log(string.toLocaleUpperCase());
+	console.log(string.toLowerCase());
+	console.log(string.toLocaleLowerCase());
+
+	console.log(typeof string);
+	var oString = new String('hello world');
+	console.log(typeof oString);
+	console.log(oString instanceof String);
+</script>
+</head>
+<body>
+    
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>检测属性存在实例中还是原型中</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	function Person() {
+	}
+
+	Person.prototype.name = 'wang kun';
+	Person.prototype.age = 20;
+	Person.prototype.job = 'man';
+
+	Person.prototype.sayName = function() {
+		alert(this.name);
+	}
+
+	var person1 = new Person();
+	var person2 = new Person();
+
+	console.log(person1.hasOwnProperty('name'));
+	console.log('name' in person1);
+
+	person1.name = 'zhang san';
+	alert(person1.name);
+	console.log(person1.hasOwnProperty('name'));
+	console.log('name' in person1);
+
+	console.log(person2.hasOwnProperty('name'));	
+	alert(person2.name);
+	console.log('name' in person2);
+
+	delete person1.name;
+	alert(person1.name);
+	console.log(person1.hasOwnProperty('name'));
+	console.log('name' in person1);
+</script>
+</head>
+<body>
+    
+</body>
+</html>
