@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>原型对象的共享</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	function Person() {}
+
+	Person.prototype = {
+		name : 'wang kun',
+		age : 20,
+		job : 'teacher',
+		friends : ['zhang', 'li'],
+		sayName : function() {
+			alert(this.friends);
+		}
+	}
+
+	var person1 = new Person();
+	var person2 = new Person();
+
+	person1.friends.push('huang');
+	person1.sayName();
+	person2.sayName();
+</script>
+</head>
+<body>
+</body>
+</html>
