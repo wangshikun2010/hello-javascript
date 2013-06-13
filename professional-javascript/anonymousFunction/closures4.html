@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>模块模式</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	var singleton = function() {
+		var age = 20;
+
+		function sayAge() {
+			alert(age);
+		}
+
+		return {
+			publicMethod : function() {
+				age++;
+				sayAge();
+			}
+		}
+	}();
+
+	singleton.publicMethod();
+
+	function BaseComponent() {}
+	function OtherComponent() {}
+
+	var application = function() {
+		var components = [];
+		components.push(new BaseComponent());
+
+		return {
+			getComponent : function() {
+				return components.length;
+			},
+
+			registerComponent : function(component) {
+				if (typeof component == 'object') {
+					components.push(component);
+				}
+			}
+		}
+	}();
+
+	application.registerComponent(new OtherComponent());
+	console.log(application.getComponent());
+</script>
+</head>
+<body>
+    
+</body>
+</html>
