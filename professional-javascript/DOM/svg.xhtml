@@ -1,0 +1,31 @@
+<html xmlns='http://www.w3.org/1999/xhtml'>
+    <head>
+        <title>xhtml页面</title>
+        <script type="text/javascript">
+
+            // 确定浏览器是否支持某些DOM模块
+            console.log(document.implementation.hasFeature('Core', '2.0'));
+            console.log(document.implementation.hasFeature('Core', '3.0'));
+            console.log(document.implementation.hasFeature('HTML', '2.0'));
+            console.log(document.implementation.hasFeature('Views', '2.0'));
+            console.log(document.implementation.hasFeature('XML', '2.0'));
+
+            // 不带命名空间前缀的节点名称
+            console.log(document.documentElement.localName);
+            console.log(document.head.localName);
+
+            // 命名空间URL
+            console.log(document.documentElement.namespaceURL);
+
+            // 命名空间前缀
+            console.log(document.documentElement.perfix);
+
+            console.log(document.documentElement.isDefaultNamespace('http://www.w3.org/1999/xhtml'));
+        </script>
+    </head>
+    <body>
+        <s:svg xmlns:s="http://www.ww3.org/2000/svg" version="1.1">
+            <!-- <s:p id="p">name</s:p> -->
+        </s:svg>
+    </body>
+</html>

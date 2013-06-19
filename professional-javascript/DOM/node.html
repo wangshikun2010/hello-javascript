@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Examples</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+</head>
+<body>
+    <script type="text/javascript">
+        var div1 = document.createElement('div');
+        div1.setAttribute('class', 'box');
+        var div2 = document.createElement('div');
+        div2.setAttribute('class', 'box');
+
+        console.log(div1.isSameNode(div1));
+        console.log(div1.isSameNode(div2));
+        console.log(div1.isEqualNode(div2));
+
+        document.body.appendChild(div1);
+        document.body.appendChild(div2);
+
+        // error: has no method
+        div1.setUserData('name', 'jack', function() {});
+        console.log(div1.getUserData('name'));
+    </script>
+</body>
+</html>

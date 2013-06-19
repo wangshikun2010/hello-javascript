@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>getComputeStyle</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <style type="text/css">
+        #div1 {
+            width: 200px;
+            height: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div id="div1" style="width: 300px; background-color: red;">
+        <p id="p1">
+        </p>
+    </div>
+    <script type="text/javascript">
+        function getStyle(element, string) {
+            if (element.currentStyle) {
+                return element.currentStyle;
+            } else {
+                return document.defaultView.getComputedStyle(element, string);
+            }
+        }
+
+        function getStyleSheet(element) {
+            return element.sheet || element.styleSheet;
+        }
+
+        var div1 = document.getElementById('div1');
+        console.log(getStyle(div1, null));
+
+        var sheet = null;
+        for (var i=0, length = document.styleSheets.length; i<length; i++) {
+            console.log(document.styleSheets[i].href);
+        }
+
+        var style1 = document.getElementsByTagName('style')[0];
+        console.log(getStyleSheet(style1));
+    </script>
+</body>
+</html>
