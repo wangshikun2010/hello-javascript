@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>鼠标事件</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script typ="text/javascript">
+    window.onload = function() {
+        var EventUtil = {
+            addHandler : function(element, type, handler) {
+                if (element.addEventListener) {
+                    element.addEventListener(type, handler, false);
+                } else if (element.attachEvent) {
+                    element.attachEvent(type, handler);
+                } else {
+                    element['on' + type] = handler;
+                }
+            },
+
+            removeHandler : function(element, type, handler) {
+                if (element.removeEventListener) {
+                    element.removeEventListener(type, handler, false);
+                } else if (element.detachEvent) {
+                    element.detachEvent(type, handler);
+                } else {
+                    element['on' + type] = null;
+                }
+            },
+
+            getEvent : function(event) {
+                return event ? event : window.event;
+            },
+
+            getTarget : function(event) {
+                return event.target || event.srcElement;
+            },
+
+            preventDefault : function(event) {
+                if (event.preventDefault) {
+                    event.preventDefault();
+                } else {
+                    event.returnValue = false;
+                }
+            },
+
+            stopPropagation : function(event) {
+                if (event.stopPropagation) {
+                    event.stopPropagation();
+                } else {
+                    event.cancelBubble = true;
+                }
+            },
+
+            getRelatedTarget : function(event) {
+                if (event.relatedTarget) {
+                    return event.relatedTarget;
+                } else if (event.fromElement) {
+                    return event.fromElement;
+                } else if (event.toElement) {
+                    return event.toElement;
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        var btn = document.getElementById('mybtn');
+        EventUtil.addHandler(btn, 'mouseover', function(e) {
+            var event = EventUtil.getEvent(e);
+            var target = EventUtil.getTarget(event);
+            console.log(target);
+            EventUtil.preventDefault(event);
+            EventUtil.stopPropagation(event);
+
+            console.log(event.clientX + ',' + event.clientY);
+            console.log(event.screenX + ',' + event.screenY);
+
+            var keys = [];
+            if (event.shiftKey) {
+                keys.push('shift');
+            }
+
+            if (event.ctrlKey) {
+                keys.push('ctrl');
+            }
+
+            if (event.altKey) {
+                keys.push('alt');
+            }
+
+            if (event.metaKey) {
+                keys.push('meta');
+            }
+
+            console.log('keys: ' + keys.join(','));
+
+            var relatedTarget = EventUtil.getRelatedTarget(event);
+            console.log('从' + target.tagName + '到' + relatedTarget.tagName);
+        })
+
+    }
+    </script>
+</head>
+<body>
+    <a href="www.baidu.com" id="mybtn">事件对象</a>
+</body>
+</html>

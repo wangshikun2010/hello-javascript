@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>获取元素可见大小和偏移量</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <style type="text/css">
+        #j-box {
+            float: left;
+            width: 200px;
+            height: 300px;
+            background-color: #999999;
+            border: 5px solid #CCCCCC;
+            margin: 5px;
+            padding: 5px;
+            overflow: scroll;
+        }
+
+        #j-display-message {
+            float: left;
+            width: 100px;
+            height: 100px;
+            border: 1px solid #CCCCCC;
+        }
+    </style>
+    <script type="text/javascript">
+    window.onload = function() {
+
+        // offset
+        var Offset = {
+            getElementLeft : function(element) {
+                var current = element.offsetLeft;
+                var currentParent = element.offsetParent;
+
+                while (currentParent !== null) {
+                    current += currentParent.offsetLeft;
+                    currentParent = currentParent.offsetParent;
+                }
+
+                return current; 
+            },
+
+            getElementTop : function(element) {
+                var current = element.offsetTop;
+                var currentParent = element.offsetParent;
+
+                while (currentParent !== null) {
+                    current += currentParent.offsetTop;
+                    currentParent = currentParent.offsetParent;
+                }
+
+                return current; 
+            },
+
+            getElementWidth : function(element) {
+                return element.offsetWidth;
+            },
+
+            getElementHeight : function(element) {
+                return element.offsetHeight;
+            }
+        }
+
+        var Client = {
+            getElementClientSize : function(element) {
+                return {
+                    width : element.clientWidth,
+                    height : element.clientHeight
+                }
+            }
+        }
+
+        var Scroll = {
+            getElementScrollSize : function(element) {
+                return {
+                    width : element.scrollWidth,
+                    height : element.scrollHeight,
+                    top : element.scrollTop,
+                    left : element.scrollLeft,
+                }
+            }
+        }
+
+        var EventUtil = {
+            addHandler : function(element, type, handler) {
+                if (element.addEventListener) {
+                    element.addEventListener(type, handler, false);
+                } else if (element.attachEvent) {
+                    element.attachEvent(type, handler);
+                } else {
+                    element['on' + type] = handler;
+                }
+            },
+
+            removeHandler : function(element, type, handler) {
+                if (element.removeEventListener) {
+                    element.removeEventListener(type, handler, false);
+                } else if (element.detachEvent) {
+                    element.detachEvent(type, handler);
+                } else {
+                    element['on' + type] = null;
+                }
+            }
+        }
+
+        var nBox = $('#j-box');
+        var nDisplayMessage = $('#j-display-message');
+        var nBtnGetHeight = $('#j-btn-get-height');
+        var nBtnGetWidth = $('#j-btn-get-width');
+        var nBtnGetTopOffset = $('#j-btn-get-top-offset');
+        var nBtnGetLeftOffset = $('#j-btn-get-left-offset');
+        var nBtnGetClientSize = $('#j-btn-get-client-size');
+        var nBtnGetScrollSize = $('#j-btn-get-scroll-size');
+
+        function $(selector) {
+            if (document.querySelector) {
+                return document.querySelector(selector);
+            }
+            if (selector.indexOf('#') === 0) {
+               return document.getElementById(selector);
+            }
+        }
+
+        var handler1 = function() {
+            nDisplayMessage.innerText = Offset.getElementTop(nBox);
+        }
+        var handler2 = function() {
+            nDisplayMessage.innerText = Offset.getElementLeft(nBox);
+        }
+        var handler3 = function() {
+            nDisplayMessage.innerText = Offset.getElementWidth(nBox);
+        }
+        var handler4 = function() {
+            nDisplayMessage.innerText = Offset.getElementHeight(nBox);
+        }
+
+        EventUtil.addHandler(nBtnGetHeight, 'click', handler4);
+        EventUtil.addHandler(nBtnGetWidth, 'click', handler3);
+        EventUtil.addHandler(nBtnGetTopOffset, 'click', handler1);
+        EventUtil.addHandler(nBtnGetLeftOffset, 'click', handler2);
+
+        EventUtil.addHandler(nBtnGetClientSize, 'click', function() {
+            var ClientSize = Client.getElementClientSize(nBox);
+            nDisplayMessage.innerText = 'width: ' + ClientSize.width + '\n' + 'height: ' + ClientSize.height;
+        });
+
+        EventUtil.addHandler(nBtnGetScrollSize, 'click', function() {
+            var ScrollSize = Scroll.getElementScrollSize(nBox);
+            nDisplayMessage.innerText = 'width: ' + ScrollSize.width + '\nheight: ' + ScrollSize.height + '\nleft' + ScrollSize.left + '\ntop' + ScrollSize.top;
+        });
+    }
+    </script>
+</head>
+<body>
+    <div id="j-box">
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+        <pre>获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元</pre>
+        <pre>素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素获取元素</pre>
+    </div>
+    <div id="j-display-message">显示信息</div>
+    <input type="button" id="j-btn-get-height" value="获取元素可见高度" />
+    <input type="button" id="j-btn-get-width" value="获取元素可见宽度" />
+    <input type="button" id="j-btn-get-top-offset" value="获取元素上偏移量" />
+    <input type="button" id="j-btn-get-left-offset" value="获取元素左偏移量" />
+    <input type="button" id="j-btn-get-client-size" value="获取客户端大小" />
+    <input type="button" id="j-btn-get-scroll-size" value="获取滚动信息" />
+</body>
+</html>

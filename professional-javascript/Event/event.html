@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>事件对象</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script typ="text/javascript">
+    window.onload = function(event) {
+
+        var EventUtil = {
+            addHandler : function(element, type, handler) {
+                if (element.addEventListener) {
+                    element.addEventListener(type, handler, false);
+                } else if (element.attachEvent) {
+                    element.attachEvent(type, handler);
+                } else {
+                    element['on' + type] = handler;
+                }
+            },
+
+            removeHandler : function(element, type, handler) {
+                if (element.removeEventListener) {
+                    element.removeEventListener(type, handler, false);
+                } else if (element.detachEvent) {
+                    element.detachEvent(type, handler);
+                } else {
+                    element['on' + type] = null;
+                }
+            }
+        }
+
+        console.log(event.type);
+        var btn = document.getElementById('mybtn');
+        EventUtil.addHandler(btn, 'click', function(event) {
+            console.log(event.type);
+            console.log(event.target);
+            console.log(event.eventPhase);
+            console.log(event.view);
+            event.stopPropagation();
+        })
+
+        // 冒泡
+        EventUtil.addHandler(document.body, 'click', function(event) {
+            console.log(event.type);
+            console.log(event.target);
+            console.log(event.eventPhase);
+        })
+
+
+    }
+    </script>
+</head>
+<body>
+    <div id="mybtn" onclick="console.log(event.type)">事件对象</div>
+</body>
+</html>

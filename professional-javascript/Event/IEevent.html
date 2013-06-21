@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>IE事件对象</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script typ="text/javascript">
+    window.onload = function() {
+        var btn = document.getElementById('mybtn');
+        btn.attachEvent('onclick', function(event) {
+            console.log(event.type);
+            console.log(event.srcElement);
+            event.returnValue = false;
+            event.cancelBubble = true;
+        })
+
+        document.body.attachEvent('onclick', function(event) {
+            console.log(event.type);
+            console.log(event.srcElement);
+        })
+
+    }
+    </script>
+</head>
+<body>
+    <a href="www.baidu.com" id="mybtn" onclick="console.log(event.type)">事件对象</a>
+</body>
+</html>

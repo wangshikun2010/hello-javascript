@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>获取元素大小</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script type="text/javascript">
+    window.onload = function() {
+        function getBoundingClientRect(element) {
+            var scrollTop = document.documentElement.scrollTop;
+            var scrollLeft = document.documentElement.scrollLeft;
+
+            if (element.getBoundingClientRect) {
+                if (typeof arguments.callee.offset != 'number') {
+                    var temp = document.createElement('div');
+                    temp.style.cssText = 'position: absolute; left: 0; top: 0';
+                    document.body.appendChild(temp);
+                    arguments.callee.offset = -temp.getBoundingClientRect().top - scrollTop;
+                    document.body.removeChild(temp);
+                    temp = null;
+                }
+
+                var rect = element.getBoundingClientRect();
+                var offset = arguments.callee.offset;
+
+                return {
+                    left : rect.left + offset,
+                    right : rect.right + offset,
+                    top : rect.top + offset,
+                    bottom : rect.bottom + offset
+                }
+            } else {
+                var actuaLeft = getElementLeft(element);
+                var actuaTop = getElementTop(element);
+
+                return {
+                    left : actuaLeft - scrollTop,
+                    right : actuaLeft + element.offsetWidth - scrollLeft,
+                    top : actuaTop - scrollTop,
+                    bottom : actuaTop - element.offsetHeight - scrollTop
+                }
+            }
+        }
+
+        function getElementLeft(element) {
+            var current = element.offsetLeft;
+            var currentParent = element.offsetParent;
+
+            while (currentParent !== null) {
+                current += currentParent.offsetLeft;
+                currentParent = currentParent.offsetParent;
+            }
+
+            return current;
+        }
+
+        function getElementTop(element) {
+            var current = element.offsetTop;
+            var currentParent = element.offsetParent;
+
+            while (currentParent !== null) {
+                current += currentParent.offsetTop;
+                currentParent = currentParent.offsetParent;
+            }
+
+            return current; 
+        }
+
+        var box = document.getElementById('box');
+        var bound = getBoundingClientRect(box);
+        box.innerText = '坐标: ' + '\nleft: ' + bound.left + 
+                                '\ntop: ' + bound.top + 
+                                '\nright: ' + bound.right + 
+                                '\nbottom: ' + bound.bottom;
+    }
+    </script>
+</head>
+<body>
+    <div id="box" style="width: 100px; height: 100px; background-color: #999999;">hgajhgja</div>
+</body>
+</html>
