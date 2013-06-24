@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>键盘事件</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script type="text/javascript" src="./eventUtil.js"></script>
+    <script type="text/javascript">
+    window.onload = function() {
+        var ndMyText = document.getElementById('myText');
+        EventUtil.addHandler(ndMyText, 'keypress', function(e) {
+            var event = EventUtil.getEvent(e);
+            var code = EventUtil.getCharCode(event);
+            console.log(code);
+            console.log(String.fromCharCode(code));
+        })
+
+        var ndMyText1 = document.getElementById('myText1');
+        EventUtil.addHandler(ndMyText1, 'textInput', function(e) {
+            var event = EventUtil.getEvent(e);
+            console.log(event.data);
+        })
+
+
+    }
+    </script>
+</head>
+<body>
+    <input type="text" id="myText" />
+    <input type="text" id="myText1" />
+</body>
+</html>
