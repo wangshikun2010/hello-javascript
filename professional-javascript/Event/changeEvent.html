@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>变动事件--节点删除</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script type="text/javascript" src="./EventUtil.js"></script>
+    <script type="text/javascript">
+    EventUtil.addHandler(window, 'load', function(event) {
+       var ndList = document.getElementById('j-mylist');
+
+       EventUtil.addHandler(document, 'DOMSubtreeModified', function(e) {
+            var event = EventUtil.getEvent(e);
+            var target = EventUtil.getTarget(event);
+            console.log('DOM tree modified');
+            console.log(event.target);
+       })
+
+       EventUtil.addHandler(document, 'DOMNodeRemoved', function(e) {
+            var event = EventUtil.getEvent(e);
+            var target = EventUtil.getTarget(event);
+            console.log('DOM node removed');
+            console.log(event.target);
+            console.log(event.ralatedNode);
+       })
+
+       EventUtil.addHandler(ndList.firstChild, 'DOMNodeRemovedFromDocument', function(e) {
+            var event = EventUtil.getEvent(e);
+            var target = EventUtil.getTarget(event);
+            console.log('DOM node removed from document');
+            console.log(event.target);
+       })
+
+       ndList.parentNode.removeChild(ndList);
+       // ndList.removeChild(document.getElementById('item1'));
+
+    })
+    </script>
+</head>
+<body>
+    <ul id="j-mylist">
+        <li id="item1">item1</li>
+        <li id="item2">item2</li>
+        <li id="item3">item3</li>
+    </ul>
+</body>
+</html>

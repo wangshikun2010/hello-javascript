@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>变动事件--文本修改</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script type="text/javascript" src="./EventUtil.js"></script>
+    <script type="text/javascript">
+    EventUtil.addHandler(window, 'load', function(event) {
+       var ndDiv = document.getElementById('j-mydiv');
+
+       EventUtil.addHandler(document, 'DOMSubtreeModified', function(e) {
+            var event = EventUtil.getEvent(e);
+            var target = EventUtil.getTarget(event);
+            console.log('DOM tree modified');
+            console.log(event.target);
+       })
+
+       EventUtil.addHandler(document, 'DOMCharacterDataModified', function(e) {
+            var event = EventUtil.getEvent(e);
+            var target = EventUtil.getTarget(event);
+            console.log('DOM textnode modified');
+            console.log(event.target);
+            console.log(event.preValue);
+            console.log(event.newValue);
+       })
+
+       ndDiv.innerText = 'new text';
+    })
+    </script>
+</head>
+<body>
+    <div id="j-mydiv">text</div>
+</body>
+</html>
