@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>模拟IE事件</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script type="text/javascript">
+    window.onload = function() {
+        var ndText = document.getElementById('j-mytext');
+        var event = document.createEventObject();
+
+        event.altKey = false;
+        event.shiftKey = false;
+        event.ctrley = false;
+        event.keyCode = 65;
+
+        ndText.fireEvent('onkeypress', event);
+    }
+    </script>
+</head>
+<body>
+    <input type="text" id="j-mytext" />
+</body>
+</html>
