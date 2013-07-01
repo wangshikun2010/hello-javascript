@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8"/>
+<style type="text/css">
+ol,ul{list-style:none; margin:0; padding:0}
+</style>
+</head>
+<body>
+<div id="main">
+    <h1>JavaScript本地存储实践</h1>
+  <div id="body">
+    <div id="content">
+    <h3>演示</h3>
+      <div style="margin:20px">
+        <form name="form1" method="post" action="">
+          <textarea id="editor" style="width: 400px; height: 100px"></textarea>
+            <input type="button" value="发布" id="save"/>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+    var editor = document.getElementById("editor");
+    editor.value="";
+    var UserData = {
+        userData : null,
+        name : location.hostname,
+        init:function(){
+            if (!UserData.userData) {
+                try {
+                    UserData.userData = document.createElement('INPUT');
+                    UserData.userData.type = "hidden";
+                    UserData.userData.style.display = "none";
+                    UserData.userData.addBehavior ("#default#userData");
+                    document.body.appendChild(UserData.userData);
+                    var expires = new Date();
+                    expires.setDate(expires.getDate()+365);
+                    UserData.userData.expires = expires.toUTCString();
+                } catch(e) {
+                    return false;
+                }
+            }
+            return true;
+        },
+        setItem : function(key, value) {
+            if(UserData.init()){
+                UserData.userData.load(UserData.name);
+                UserData.userData.setAttribute(key, value);
+                UserData.userData.save(UserData.name);
+            }
+        },
+        getItem : function(key) {
+            if(UserData.init()){
+             UserData.userData.load(UserData.name);
+             return UserData.userData.getAttribute(key)
+            }
+        },
+        remove : function(key) {
+            if(UserData.init()){
+             UserData.userData.load(UserData.name);
+             UserData.userData.removeAttribute(key);
+             UserData.userData.save(UserData.name);
+            }
+        }
+    };
+    window.onbeforeunload=function(){
+        if(!window.localStorage){
+            UserData.setItem('editor-text',editor.value);
+        }else{
+            localStorage.setItem('editor-text',editor.value);
+        }
+    };
+    window.onload=function(){
+        if(!window.localStorage){
+            if(UserData.getItem('editor-text')==undefined) {
+                editor.value="";
+            }else{
+                editor.value=UserData.getItem('editor-text');
+            }
+        }else{
+            if(localStorage.getItem('editor-text')!=null){
+                editor.value=localStorage.getItem('editor-text');
+            }else{
+                editor.value="";
+            }
+        }
+    };
+    document.getElementById("save").onclick=function(){
+        editor.value="";
+        if(!window.localStorage){
+            UserData.remove('editor-text');
+        }else{
+            localStorage.removeItem('editor-text');
+        }
+    };
+</script>

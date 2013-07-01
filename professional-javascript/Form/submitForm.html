@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>重置表单</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link href="" rel="stylesheet">
+    <script type="text/javascript" src="./eventUtil.js"></script>
+    <script type="text/javascript">
+    EventUtil.addHandler(window, 'load', function(e) {
+        var nameFirstForm = document.getElementById('j-form1');
+        var ndSubmit = document.getElementById('j-submit');
+
+        // console.log(nameFirstForm.text);
+        // console.log(nameFirstForm.submit);
+        console.log(nameFirstForm.__proto__);
+
+        EventUtil.addHandler(ndSubmit, 'click', function(e) {
+            nameFirstForm.submit();
+            console.log('submit()');
+        })
+
+        EventUtil.addHandler(nameFirstForm, 'submit', function(e) {
+            var event = EventUtil.getEvent(e);
+            EventUtil.preventDefault(event);
+            console.log('submit');
+        })
+    })
+    </script>
+</head>
+<body>
+    <form action="" name="form1" id="j-form1">
+        <input type="text" name="text"/>
+        <input type="submit" name="submit" id="j-submit" />
+    </form>
+</body>
+</html>

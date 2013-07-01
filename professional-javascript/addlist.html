@@ -1,0 +1,193 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<title>可以添加的文字的文档</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<style type="text/css">
+		#contain {
+			margin: 50px 15em;
+			padding: 20px;
+			background: #CCCCCC;
+			border: 1px solid #aaaaaa;
+			text-align: left;
+		}
+
+		#form {
+			background: #ffffff;
+			border: 1px solid #aaaaaa;
+			padding: 20px;
+		}
+
+		#form label {
+			font-size: 1.5em;
+			font-weight: bold;
+			color: #a3ab5d;
+		}
+
+		#form #text {
+			border: 2px solid #CCCCCC;
+			border-radius: 3px;
+			width: 400px;
+			height: 30px;
+			font-size: 1.5em;
+			color: #a3ab5d;
+			background: #feffff;
+		}
+
+		#form #button {
+			width: 80px;
+			height: 35px;
+			font-size: 1.5em;
+			color: #a3ab5d;
+		}
+
+		li span {
+			width: 300px;
+			display: inline-block;
+		}
+
+		li a {
+			cursor: pointer;
+			color: #0000FF;
+			text-decoration: underline;
+		}
+	</style>
+	<script type="text/javascript">
+		var names = [];
+
+		function AddText() {
+			var input = document.querySelector('#text');
+			var list = document.querySelector('#list');
+
+			// 去掉用户输入文字前面的空白字符
+			while(input.value.indexOf(" ") == 0) {
+				input.value = input.value.replace(" ","");
+			}
+
+			if (input.value=="") {
+				alert("请输入内容");
+				return;
+			}
+
+			//把后输入的文本显示在先输入文本的前面
+			var node = createNode(input.value);
+			list.insertBefore(node,list.firstChild);
+
+			//用户点击按钮之后,把输入框的内容清空,输入框获得焦点,光标闪烁
+			input.value = "";
+			input.focus();
+
+			return false;
+		}
+
+		function editNode(node, span, text) {
+			var timestamp = (new Date).getTime();
+
+			var input = document.createElement('input');
+			input.setAttribute('id', 'input-' + timestamp);
+			input.style.width = "300px";
+			input.value = text;
+
+			node.insertBefore(input, span);
+			span.style.display = "none";
+
+			input.focus();
+
+			input.addEventListener('blur', saveNode);
+
+			var old_text = text;
+			function saveNode() {
+				var new_text  = input.value;
+				console.log("新内容: " + new_text);
+				node.removeChild(input);
+				span.style.display = "";
+				span.innerHTML = new_text;
+
+				for (var i=0;i<names.length;i++) {
+					if (names[i] === old_text) {
+						names[i] = new_text;
+					}
+				}
+
+				localStorage.setItem("names",names.join("###"));
+			}
+
+		}
+
+		function createNode(text) {
+			//创建一个li元素,创建一个a链接,用于删除文本
+			var ndLi = document.createElement('li');
+			var link = document.createElement('a');
+			link.innerText = '删除';
+
+			//点击删除按钮的时候,可以随意删除一个节点
+			link.onclick = function () {
+				ndLi.parentNode.removeChild(ndLi);
+
+				//遍历数组,如果要删除的文本不等于names数组里的其他文本,就将不等于要删除的文本数组的里面的其他文本添加到newNames数组里,newNames数组就覆盖names数组
+				var newNames = [];
+				for (var i=0;i<names.length;i++) {
+					if (names[i] != text) {
+						newNames.push(names[i]);
+					}
+				}
+				console.log(names);
+				console.log(newNames);
+				names = newNames;
+				localStorage.setItem("names",names.join("###"));
+			}
+
+			//创建两个元素,一个元素里面装输入的字符串,另一个里面装创建时间,分别把它们添加到列表元素中
+			var span = document.createElement('span');
+			span.appendChild(document.createTextNode(text));
+
+			span.addEventListener("dblclick", function () {
+				editNode(ndLi, span, text);
+			});
+
+			var span2 = document.createElement('span');
+
+			//把输入的字符串,时间,删除按钮添加到列表元素中
+			ndLi.appendChild(span);
+			ndLi.appendChild(span2);
+			ndLi.appendChild(link);
+
+			//在输入的文本数组里添加输入的文本值
+			names.push(text);
+			console.log(names);
+
+			localStorage.setItem("names",names.join("###"));
+
+			return ndLi;
+		}
+
+		window.onload = function () {
+			document.querySelector('#button').onclick = AddText;
+			document.querySelector('form').onsubmit = AddText;
+
+			//把本地存储取出来,存在names数组里,用localStorage.setItem(),如果names存在,就把names里面后输入的文本,显示第一个
+			var names = localStorage.getItem("names");
+			console.log(names);
+			if (names) {
+				names = names.split("###");
+				var list = document.querySelector('#list');
+				for ( var i=0;i<names.length;i++) {
+					list.insertBefore(createNode(names[i]),list.firstChild);
+				}
+			}
+		}
+
+	</script>
+</head>
+<body>
+	<div id="contain">
+		<div id="form" name="form">
+			<form method="" action="">
+				<input type="text" name="textname" id="text"/>
+				<input type="submit" name="button" id="button" value="添加"/>
+			</form>
+			<ol id="list"></ol>
+		</div>
+	</div>
+</body>
+</html>
