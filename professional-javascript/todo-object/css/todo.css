@@ -25,7 +25,7 @@ article {
     text-align: center;
 }
 
-input#j-todo-input-box,.todo-input-box {
+input#j-todo-input-box,.edit {
     width: 98%;
     height: 25px;
     padding: 5px;
@@ -42,10 +42,18 @@ input#j-todo-input-box,.todo-input-box {
     -o-transition: .3s ease-in-out;
 }
 
-input#j-todo-input-box:focus,.todo-input-box:focus {
+input#j-todo-input-box:focus,.edit:focus {
     box-shadow: 0px 0px 3px #007eff;
     -webkit-box-shadow: 0px 0px 3px #007eff;
     -moz-box-shadow: 0px 0px 3px #007eff;
+}
+
+.view {
+    display: block;
+}
+
+.edit {
+    display: none;
 }
 
 #j-select-all {
@@ -87,7 +95,7 @@ ul#j-todo-list li:hover .todo-list-delete {
 }
 
 .todo-list-content {
-    width: 350px;
+    width: 80%;
 }
 
 .todo-list-delete {
