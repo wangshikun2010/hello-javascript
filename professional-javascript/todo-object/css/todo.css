@@ -18,14 +18,15 @@ article {
 
 /* header */
 
-#header header {
+.header header {
     margin: 0px;
     font-size: 30px;
     color: #B1A9B1;
     text-align: center;
 }
 
-input#j-todo-input-box,.edit {
+.input .input__text,
+.todo .todo__item--edit {
     width: 98%;
     height: 25px;
     padding: 5px;
@@ -42,21 +43,14 @@ input#j-todo-input-box,.edit {
     -o-transition: .3s ease-in-out;
 }
 
-input#j-todo-input-box:focus,.edit:focus {
+.input .input__text:focus,
+.todo .todo__item--edit:focus {
     box-shadow: 0px 0px 3px #007eff;
     -webkit-box-shadow: 0px 0px 3px #007eff;
     -moz-box-shadow: 0px 0px 3px #007eff;
 }
 
-.view {
-    display: block;
-}
-
-.edit {
-    display: none;
-}
-
-#j-select-all {
+.input .input__checkbox {
     display: none;
     margin-top: 8px;
     font-size: 12px;
@@ -65,12 +59,12 @@ input#j-todo-input-box:focus,.edit:focus {
 
 /* content */
 
-ul#j-todo-list {
+.todo {
     margin: 0px;
     padding: 0px;
 }
 
-ul#j-todo-list li {
+.todo .todo__item {
     height: 30px;
     line-height: 30px;
     border-bottom: 1px dotted #CCCCCC;
@@ -79,36 +73,46 @@ ul#j-todo-list li {
     list-style-type: none;
 }
 
-ul#j-todo-list li:hover .todo-list-delete {
+.todo .todo__item__view {
     display: block;
 }
 
-.todo-list-checked,
-.todo-list-content,
-.todo-list-delete {
+.todo__item--checked,
+.todo__item__content,
+.todo__item--delete {
     float: left;
 }
 
-.todo-list-checked {
+.todo__item--checked {
     width: 20px;
     margin: 10px 5px 0 0;
 }
 
-.todo-list-content {
+.todo__item__content {
     width: 80%;
 }
 
-.todo-list-delete {
+.todo__item--delete {
     display: none;
     float: right;
     width: 50px;
     cursor: pointer;
 }
 
-.todo-list-complete {
+.todo .todo__item:hover .todo__item--delete {
+    display: block;
+}
+
+.todo .todo__item--edit {
+    display: none;
+}
+
+.todo__item--complete {
     text-decoration: line-through;
     color: #B1A9B1;
 }
+
+/* footer */
 
 footer {
     height: 30px;
@@ -123,7 +127,7 @@ footer p {
     float: left;
 }
 
-footer #j-todo-clear-complete {
+footer .todo--complete {
     display: block;
     float: right;
     padding: 0 5px;
@@ -133,6 +137,6 @@ footer #j-todo-clear-complete {
     cursor: pointer;
 }
 
-footer #j-todo-clear-complete:hover {
+footer .todo--complete:hover {
     background: #F8F0E3;    
 }

@@ -13,26 +13,26 @@
 </head>
 <body>
     <article>
-        <section id="header">
+        <section class="header">
             <header>todo</header>
-            <div id="j-todo-input">
+            <div class="input">
                 <form action="">
-                    <input type="text" id="j-todo-input-box" placeholder="还有什么事没有做?" autofocus required autocomplete="off" maxlength="25"/>
+                    <input type="text" id="j-todo-input-box" class="input__text" placeholder="还有什么事没有做?" autofocus required autocomplete="off" maxlength="25"/>
                 </form>
-                <label id="j-select-all">
+                <label id="j-select-all" class="input__checkbox">
                     <input type="checkbox" name="select-all" value="all">全部选中
                 </label>
             </div>
         </section>
-        <section id="content">
-            <ul id="j-todo-list"></ul>
+        <section class="content">
+            <ul id="j-todo-list" class="todo"></ul>
         </section>
         <footer>
             <p>
                 <span id="j-todo-list-length"></span>
                 个项目
             </p>
-            <p id="j-todo-clear-complete">
+            <p id="j-todo-clear-complete" class="todo--complete">
                 <span id="j-todo-complete-length"></span>
                 个已完成项目
             </p>

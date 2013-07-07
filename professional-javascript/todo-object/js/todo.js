@@ -61,9 +61,9 @@ EventUtil.addHandler(window, 'load', function(event) {
                     var target = EventUtil.getTarget(event);
 
                     if (target.checked) {
-                        ndTodoItem.querySelector('span').setAttribute('class', 'todo-list-complete');
+                        ndTodoItem.querySelector('span').setAttribute('class', 'todo__item--complete');
                     } else {
-                        ndTodoItem.querySelector('span').setAttribute('class', 'todo-list-content');
+                        ndTodoItem.querySelector('span').setAttribute('class', 'todo__item__content');
                     }
                     self.update();
                     self.setClearButtonDisplay();
@@ -85,12 +85,13 @@ EventUtil.addHandler(window, 'load', function(event) {
                 }
             });
         },
-
+        
         addTodoItem : function() {
             var ndTodoItem = document.createElement('li');
             this.todoListId++;
             ndTodoItem.setAttribute('id', this.todoListId);
-            ndTodoItem.innerHTML = '<div class="view"><input type="checkbox" name="todoChecked" class="todo-list-checked">' + '<span class="todo-list-content" id="j-todo-list-value">' + this.ndTodoInputBox.value + '</span>' + '<a class="todo-list-delete">删除</a></div><input type="text" class="edit" maxlength="25">';
+            ndTodoItem.setAttribute('class', 'todo__item');
+            ndTodoItem.innerHTML = '<div class="todo__item__view"><input type="checkbox" name="todoChecked" class="todo__item--checked">' + '<span class="todo__item__content" id="j-todo-list-value">' + this.ndTodoInputBox.value + '</span>' + '<a class="todo__item--delete">删除</a></div><input type="text" class="todo__item--edit" maxlength="25">';
             this.ndTodoList.insertBefore(ndTodoItem, this.ndTodoList.firstChild);
 
             this.ndTodoInputBox.value = '';
@@ -160,12 +161,12 @@ EventUtil.addHandler(window, 'load', function(event) {
                 if (target.checked) {
                     for (var i=0; i<self.ndTodoList.childNodes.length; i++) {
                         self.ndTodoList.childNodes[i].querySelector('input').checked = true;
-                        self.ndTodoList.childNodes[i].querySelector('span').setAttribute('class', 'todo-list-complete');
+                        self.ndTodoList.childNodes[i].querySelector('span').setAttribute('class', 'todo__item--complete');
                     }
                 } else {
                     for (var i=0; i<self.ndTodoList.childNodes.length; i++) {
                         self.ndTodoList.childNodes[i].querySelector('input').checked = false;
-                        self.ndTodoList.childNodes[i].querySelector('span').setAttribute('class', 'todo-list-content');
+                        self.ndTodoList.childNodes[i].querySelector('span').setAttribute('class', 'todo__item__content');
                     }
                 }
                 self.update();
