@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>冒泡排序</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link type="text/css" href="" rel="stylesheet">
+    <script type="text/javascript">
+        window.onload = function () {
+            var num = [2,5,8,65,45,7,23,4,1,0];
+            var str = ['faf','gg', 'war', 'aaf', 20, 'rerg', 'uj' , 45, 3];
+
+            var ndInputNum = document.getElementById('j-input-num');
+            var ndInputStr = document.getElementById('j-input-str');
+            var ndOutput = document.getElementById('j-output');
+            var ndSort = document.getElementById('j-sort');
+            var ndBubble = document.getElementById('j-bubble');
+
+            ndInputNum.innerText = num.join(',');
+            ndInputStr.innerText = str.join(',');
+
+            for (var i=0; i<str.length; i++) {
+                for (j=i+1; j<str.length; j++) {
+                    console.log('交换');
+                    if (str[i] > str[j]) {
+                        var temp = str[i];
+                        str[i] = str[j];
+                        str[j] = temp;
+                    }
+                }
+            }
+
+            // for (var i=0; i<num.length; i++) {
+            //     for (j=num.length-1; j>=0; j--) {
+            //         console.log('交换');
+            //         if (num[j] > num[j+1]) {
+            //             var temp = num[j];
+            //             num[j] = num[j+1];
+            //             num[j+1] = temp;
+            //         }
+            //     }
+            // }
+
+            // var flag = true; // 是否交换
+            // for (var i=0; i<num.length && flag; i++) {
+            //     flag = false;
+            //     for (j=num.length-1; j>=0; j--) {
+            //         console.log('交换');
+            //         if (num[j] > num[j+1]) {
+            //             var temp = num[j];
+            //             num[j] = num[j+1];
+            //             num[j+1] = temp;
+            //             flag = true;
+            //         }
+            //     }
+            // }
+
+            // function compare(value1, value2) {
+            //     if (value1 < value2) {
+            //         return -1;
+            //     } else if (value1 > value2) {
+            //         return 1;
+            //     } else {
+            //         return 0;
+            //     }
+            // }
+
+            function compare(value1, value2) {
+                return value1 - value2;
+            }
+
+            ndSort.onclick = function() {
+                ndOutput.innerText = str.join(',');
+                // ndOutput.innerText = num.sort(compare);
+                // ndOutput.innerText = str.sort();
+            }     
+        }
+    </script>
+</head>
+<body>
+    <div id="j-input-num"></div>
+    <div id="j-input-str"></div>
+    <div id="j-output"></div>
+    <button id="j-sort">sort</button>
+    <button id="j-bubble">bubble</button>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>插入排序</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link type="text/css" href="" rel="stylesheet">
+    <script type="text/javascript">
+        window.onload = function () {
+            var num = [2,5,8,65,45,7,23,4,1,0];
+            var str = ['faf','gg', 'war', 'aaf', 'rerg', 'uj' ,20, 45, 3];
+
+            var ndInputNum = document.getElementById('j-input-num');
+            var ndInputStr = document.getElementById('j-input-str');
+            var ndOutput = document.getElementById('j-output');
+            var ndInsert = document.getElementById('j-insert');
+
+            ndInputNum.innerText = num.join(',');
+            ndInputStr.innerText = str.join(',');
+
+            for (var i=2; i<num.length; i++) {
+
+                // 在后面的数字小于前面的数字
+                if (num[i] < num[i - 1]) {
+                    num[0] = num[i];
+                    // console.log(num[0]);
+                    for (j=i-1; num[j]>num[0]; j--) {
+                        num[j+1] = num[j];
+                    }
+                    num[j+1] = num[0];
+                }
+            }
+
+            ndInsert.onclick = function() {
+                ndOutput.innerText = num.reverse().join(',');
+            }
+
+        }
+    </script>
+</head>
+<body>
+    <div id="j-input-num"></div>
+    <div id="j-input-str"></div>
+    <div id="j-output"></div>
+    <button id="j-insert">insert</button>
+</body>
+</html>

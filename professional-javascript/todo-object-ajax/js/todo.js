@@ -1,4 +1,5 @@
-function Todo(ndTodoInputBox, ndTodoSelectAll, ndTodoList, ndFooter, ndTodoListLength, ndTodoClearComplete, ndTodoListCompleteLength) {
+function Todo(ndTodoSync, ndTodoInputBox, ndTodoSelectAll, ndTodoList, ndFooter, ndTodoListLength, ndTodoClearComplete, ndTodoListCompleteLength) {
+    this.ndTodoSync = ndTodoSync;
     this.ndTodoInputBox = ndTodoInputBox;
     this.ndTodoSelectAll = ndTodoSelectAll;
     this.ndTodoList = ndTodoList;
@@ -36,14 +37,13 @@ Todo.prototype = {
     request : function(url, method, data, callback) {
         var self = this;
 
-        Img.rotate('#j-todo-sync', 360);
-        // var date = new Date();
-        // console.log(date.getTime());
+        self.ndTodoSync.style.display = 'block';
         var xhr = this.createXHR();
 
         // 在准备状态变化时执行
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
+                self.ndTodoSync.style.display = 'none';
                 // console.log(url);
                 // console.log(data);
                 var response = JSON.parse(xhr.responseText);
@@ -80,6 +80,7 @@ Todo.prototype = {
 
             // 添加一个todoItem
             var todoInputValue = encodeURIComponent(self.ndTodoInputBox.value);
+            self.ndTodoInputBox.value = '';
             self.request('/cakephp-2.3.7/todos/add', 'post', 'data[content]=' + todoInputValue, function(response) {
                 if (response.status == true) {
                     self.addTodoItem(response.data);
@@ -107,7 +108,6 @@ Todo.prototype = {
         }
 
         self.ndTodoList.insertBefore(ndTodoItem, self.ndTodoList.firstChild);
-        self.ndTodoInputBox.value = '';
 
         // 显示footer和项目条数
         self.update();
@@ -251,15 +251,30 @@ Todo.prototype = {
             event = EventUtil.getEvent(event);
             var target = EventUtil.getTarget(event);
 
-            var completed = target.checked ? 1 : 0;                
-            
-            for (var i=0; i<self.ndTodoList.childNodes.length; i++) {
-                if (self.ndTodoList.childNodes[i].querySelector('input[type=checkbox]').checked != completed) {
+            var completed = target.checked ? 1 : 0;
+
+            if (completed) {
+                for (var i=0; i<self.ndTodoList.childNodes.length; i++) {
+                    if (self.ndTodoList.childNodes[i].querySelector('input[type=checkbox]').checked == false) {
+                        self.request('/cakephp-2.3.7/todos/complete/' + self.ndTodoList.childNodes[i].id + '/' + completed, 'get', null, (function(element) {
+                            return function(response) {
+                                if (response.status == true) {
+                                    element.querySelector('input[type=checkbox]').checked = true;
+                                    element.querySelector('span').setAttribute('class', 'todo__item__complete');
+                                }
+                                self.update();
+                                self.setClearButtonDisplay();
+                            } 
+                        })(self.ndTodoList.childNodes[i]));
+                    }
+                }
+            } else {
+                for (var i=0; i<self.ndTodoList.childNodes.length; i++) {
                     self.request('/cakephp-2.3.7/todos/complete/' + self.ndTodoList.childNodes[i].id + '/' + completed, 'get', null, (function(element) {
                         return function(response) {
                             if (response.status == true) {
-                                element.querySelector('input[type=checkbox]').checked = true;
-                                element.querySelector('span').setAttribute('class', 'todo__item__complete');
+                                element.querySelector('input[type=checkbox]').checked = false;
+                                element.querySelector('span').setAttribute('class', 'todo__item__content');
                             }
                             self.update();
                             self.setClearButtonDisplay();
@@ -267,22 +282,6 @@ Todo.prototype = {
                     })(self.ndTodoList.childNodes[i]));
                 }
             }
-
-            // if (completed) {
-            // } else {
-            //     for (var i=0; i<self.ndTodoList.childNodes.length; i++) {
-            //         self.request('/cakephp-2.3.7/todos/complete/' + self.ndTodoList.childNodes[i].id + '/' + completed, 'get', null, (function(element) {
-            //             return function(response) {
-            //                 if (response.status == true) {
-            //                     element.querySelector('input[type=checkbox]').checked = false;
-            //                     element.querySelector('span').setAttribute('class', 'todo__item__content');
-            //                 }
-            //                 self.update();
-            //                 self.setClearButtonDisplay();
-            //             } 
-            //         })(self.ndTodoList.childNodes[i]));
-            //     }
-            // }
         });
     },
 
@@ -349,6 +348,7 @@ Todo.prototype = {
 }
 
 EventUtil.addHandler(window, 'load', function(event) {
+    var ndTodoSync = $('#j-todo-sync');
     var ndTodoInputBox = $('#j-todo-input-box');
     var ndTodoSelectAll = $('#j-select-all');
     var ndTodoList = $('#j-todo-list');
@@ -357,7 +357,7 @@ EventUtil.addHandler(window, 'load', function(event) {
     var ndTodoClearComplete = $('#j-todo-clear-complete');
     var ndTodoListCompleteLength = $('#j-todo-complete-length');
 
-    var todo = new Todo(ndTodoInputBox, ndTodoSelectAll, ndTodoList, ndFooter, ndTodoListLength, ndTodoClearComplete, ndTodoListCompleteLength);
+    var todo = new Todo(ndTodoSync, ndTodoInputBox, ndTodoSelectAll, ndTodoList, ndFooter, ndTodoListLength, ndTodoClearComplete, ndTodoListCompleteLength);
     todo.initTodo();
 });
 
@@ -370,51 +370,3 @@ function $(selector) {
         return document.getElementById(selector);
     }
 }
-
-var Img = function() {
-    var ua = navigator.userAgent,
-        isIE = /msie/i.test(ua) && !window.opera;
-
-    var i = 0,
-        sinDeg = 0,
-        cosDeg = 0,
-        timer = null;
-
-    var rotate = function(target, degree) {
-        target = $(target);
-
-        var orginW = target.clientWidth,
-            orginH = target.clientHeight;
-            clearInterval(timer);
-
-        function run(angle) {
-            if (isIE) { // IE
-                cosDeg = Math.cos(angle * Math.PI / 180);
-                sinDeg = Math.sin(angle * Math.PI / 180);
-                with(target.filters.item(0)) {
-                    M11 = M22 = cosDeg; M12 = -(M21 = sinDeg);
-                }
-                target.style.top = (orginH - target.offsetHeight) / 2 + 'px';
-                target.style.left = (orginW - target.offsetWidth) / 2 + 'px';
-            } else if (target.style.MozTransform !== undefined) {  // Mozilla
-                target.style.MozTransform = 'rotate(' + angle + 'deg)';
-            } else if (target.style.OTransform !== undefined) {   // Opera
-                target.style.OTransform = 'rotate(' + angle + 'deg)';
-            } else if (target.style.webkitTransform !== undefined) { // Chrome Safari
-                target.style.webkitTransform = 'rotate(' + angle + 'deg)';
-            } else {
-                target.style.transform = "rotate(" + angle + "deg)";
-            }
-        }
-        
-        timer = setInterval(function() {
-            i += 10;
-            run(i);
-            if (i > degree - 1) {
-                i = 0;
-                clearInterval(timer);
-            } 
-        }, 30);
-    }
-    return {rotate: rotate}
-}();

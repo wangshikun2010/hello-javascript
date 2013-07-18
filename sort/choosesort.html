@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>简单排序</title>
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <link type="text/css" href="" rel="stylesheet">
+    <script type="text/javascript">
+        window.onload = function () {
+            var num = [2,5,8,65,45,7,23,4,1,0];
+            var str = ['faf','gg', 'war', 'aaf', 'rerg', 'uj' ,20, 45, 3];
+
+            var ndInputNum = document.getElementById('j-input-num');
+            var ndInputStr = document.getElementById('j-input-str');
+            var ndOutput = document.getElementById('j-output');
+            var ndChoose = document.getElementById('j-choose');
+
+            ndInputNum.innerText = num.join(',');
+            ndInputStr.innerText = str.join(',');
+
+            for (var i=0; i<num.length; i++) {
+                var min = i;
+                for (j=i+1; j<num.length; j++) {
+                    if (num[min] > num[j]) {
+                        min = j;
+                    }
+
+                    if (min != i) {
+                        console.log('交换');
+                        var temp = num[i];
+                        num[i] = num[min];
+                        num[min] = temp;
+                    }
+                }
+            }
+
+            ndChoose.onclick = function() {
+                ndOutput.innerText = num.reverse().join(',');
+            }
+
+        }
+    </script>
+</head>
+<body>
+    <div id="j-input-num"></div>
+    <div id="j-input-str"></div>
+    <div id="j-output"></div>
+    <button id="j-choose">choose</button>
+</body>
+</html>
