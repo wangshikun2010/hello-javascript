@@ -2,6 +2,7 @@ $(function() {
 
     var todo = new Object();
 
+    // use jquery selector get element node
     todo.ndTodoSync = $('#j-todo-sync');
     todo.ndTodoInputBox = $('#j-todo-input-box');
     todo.ndTodoSelectAll = $('#j-select-all');
@@ -15,57 +16,19 @@ $(function() {
     todo.todoListComplete = 0;
     todo.ndTodoItem = null;
 
-    // todo.createXHR = function() {
-    //     if (typeof XMLHttpRequest != 'undefined') {
-    //         return new XMLHttpRequest();
-    //     } else if (typeof ActiveXObject != 'undefined') {
-    //         if (typeof arguments.callee.activeXString != 'string') {
-    //             var versions = ['MSXML2.XMLHttp.6.0', 'MSXML2.XMLHttp.3.0','MSXML.XMLHttp'];
-    //             for (var i=0,len=versions.length; i<len; i++) {
-    //                 try {
-    //                     var xhr = new ActiveXObject(versions[i]);
-    //                     arguments.callee.activeXString = versions[i];
-    //                     return xhr;
-    //                 } catch (ex) {
-    //                     //
-    //                 }
-    //             }
-    //         }
-    //         return new ActiveXObject(arguments.callee.activeXString);
-    //     }
-    // }
-
-    // todo.request = function(url, method, data, callback) {
-
-    //     todo.ndTodoSync[0].style.display = 'block';
-    //     var xhr = todo.createXHR();
-
-    //     // 在准备状态变化时执行
-    //     xhr.onreadystatechange = function() {
-    //         if (xhr.readyState === 4 && xhr.status === 200) {
-    //             todo.ndTodoSync[0].style.display = 'none';
-    //             // console.log(url);
-    //             // console.log(data);
-    //             var response = JSON.parse(xhr.responseText);
-    //             callback(response);
-    //         }
-    //     }
-
-    //     // NOTE POST请求需要设置额外的Header
-    //     xhr.open(method, url, true);
-    //     if (method.toLowerCase() == 'post') {
-    //         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    //     }
-    //     xhr.send(data);
-    // }
-
+    // todo init
     todo.initTodo = function() {
+
+        $(document).ajaxStart(function() {
+            todo.ndTodoSync.show();
+        }).ajaxStop(function() {
+            todo.ndTodoSync.hide();
+        })
 
         // 获取全部数据并添加到页面
         $.get('/cakephp-2.3.7/todos', null, function (response) {
             for (var i=0; i<response.length; i++) {
-                // console.log(response[i]);
-                todo.addTodoItem(response[i]);
+                todo.addTodoItem(response[i], null);
             }
 
             todo.update();
@@ -74,72 +37,75 @@ $(function() {
             todo.selectAll();
         });
 
-        EventUtil.addHandler(document.forms[0], 'submit', function(event) {
-            event = EventUtil.getEvent(event);
-            EventUtil.preventDefault(event);
+        $(document.forms[0]).submit(function(event) {
+            event.preventDefault();
+
+            var todoInputValue = encodeURIComponent(todo.ndTodoInputBox.val());
+            todo.ndTodoInputBox.val('');
 
             // 添加一个todoItem
-            var todoInputValue = encodeURIComponent(todo.ndTodoInputBox[0].value);
-            todo.ndTodoInputBox[0].value = '';
+            todo.addTodoItem(null, todoInputValue);
+
             $.post('/cakephp-2.3.7/todos/add', 'data[content]=' + todoInputValue, function(response) {
                 if (response.status == true) {
-                    todo.addTodoItem(response.data);
+                    console.log(response.data);
                 }
             });
-            
         });
     },
     
-    todo.addTodoItem = function(todoItem) {
-        // console.log(todoItem);
-        // 创建一个todoItem
-        todo.ndTodoItem = $('<li></li>');
-        todo.ndTodoItem.attr('class', 'todo__item');
-        todo.ndTodoItem.attr('id', todoItem.Todo.id);
-        todo.ndTodoItem.html('<div class="todo__item__view"><input type="checkbox" name="todoChecked" class="todo__item__checked">' + '<span class="todo__item__content" id="j-todo-list-value">' + todoItem.Todo.content + '</span>' + '<a class="todo__item__delete"></a></div><input type="text" class="todo__item__edit" maxlength="25">');
-        // console.log(todo.ndTodoItem);
-        
-        // 在加载完毕判断todoItem是否完成
-        if (todoItem.Todo.completed == true) {
-            todo.ndTodoItem.find('input[type=checkbox]').attr('checked', true);
-            todo.ndTodoItem.find('span').attr('class', 'todo__item__complete');
-        } else {
-            todo.ndTodoItem.find('span').attr('class', 'todo__item__content');
+    todo.addTodoItem = function(todoItem, addTodo) {
+        console.log(todoItem, addTodo);
+
+        if (addTodo == null) {
+            // 创建一个todoItem
+            todo.ndTodoItem = $('<li id=todo' + todoItem.Todo.id + ' class="todo__item"></li>');
+            todo.ndTodoItem.html('<div class="todo__item__view"><input type="checkbox" name="todoChecked" class="todo__item__checked">' + '<span class="todo__item__content" id="j-todo-list-value">' + todoItem.Todo.content + '</span>' + '<a class="todo__item__delete"></a></div><input type="text" class="todo__item__edit" maxlength="25">');
+            
+            // 在加载完毕判断todoItem是否完成
+            if (todoItem.Todo.completed) {
+                todo.ndTodoItem.find('input[type=checkbox]')
+                               .attr('checked', true)
+                               .next('span')
+                               .attr('class', 'todo__item__complete');
+            } else {
+                todo.ndTodoItem.find('span')
+                               .attr('class', 'todo__item__content');
+            }
+        } else if (todoItem == null) {
+            // 创建一个todoItem
+            todo.ndTodoItem = $('<li id=todo' +  + ' class="todo__item"></li>');
+            todo.ndTodoItem.html('<div class="todo__item__view"><input type="checkbox" name="todoChecked" class="todo__item__checked">' + '<span class="todo__item__content" id="j-todo-list-value">' + addTodo + '</span>' + '<a class="todo__item__delete"></a></div><input type="text" class="todo__item__edit" maxlength="25">');
         }
 
-        // console.log(todo.ndTodoList.first());
         todo.ndTodoItem.prependTo(todo.ndTodoList);
 
         // 显示footer和项目条数
         todo.update();
         todo.setFooterDisplay();
 
-        // 编辑todoItem
-        EventUtil.addHandler(todo.ndTodoItem, 'dblclick', function(event) {
-            event = EventUtil.getEvent(event);
-            var target = EventUtil.getTarget(event);
-            todo.editTodoItem(target);
-        });
-
         // 获取todoItem的复选框和删除按钮
-        // console.log(todo.ndTodoItem.html());
         var $ndTodoCheckbox = todo.ndTodoItem.find('div>input[type=checkbox]');
         var $ndTodoDelete = todo.ndTodoItem.find('a');
 
-        // console.log($ndTodoCheckbox[0]);
+        // 编辑todoItem
+        todo.ndTodoItem.dblclick(function(event) {
+            var $target = $(event.target);
+
+            // console.log($target);
+            todo.editTodoItem($target);
+        });
+
         if ($ndTodoCheckbox.length > 0) {
             $ndTodoCheckbox.click(changeStyle);
-            // EventUtil.addHandler($ndTodoCheckbox, 'click', changeStyle);
         }
 
         if ($ndTodoDelete.length > 0) {
             $ndTodoDelete.click(deleteTodoItem);
-            // EventUtil.addHandler($ndTodoDelete, 'click', deleteTodoItem);
         }
 
         function changeStyle(event) {
-            event = EventUtil.getEvent(event);
-            var $target = $(EventUtil.getTarget(event));
+            var $target = $(event.target);
 
             console.log($target);
 
@@ -152,9 +118,11 @@ $(function() {
             $.get('/cakephp-2.3.7/todos/complete/' + todoItemId + '/' + completed, null, function(response) {
                 if (response.status == true) {
                     if (completed) {
-                        $ndLi.find('span').attr('class', 'todo__item__complete');
+                        $ndLi.find('span')
+                            .attr('class', 'todo__item__complete');
                     } else {
-                        $ndLi.find('span').attr('class', 'todo__item__content');
+                        $ndLi.find('span')
+                            .attr('class', 'todo__item__content');
                     }
                 }
 
@@ -165,60 +133,73 @@ $(function() {
         }
 
         function deleteTodoItem(event) {
-            event = EventUtil.getEvent(event);
-            var target = EventUtil.getTarget(event);
-            EventUtil.preventDefault(event);
+            var $target = $(event.target);
+            event.preventDefault();
+
+            var $ndLi = $target.parents('li');
+
+            console.log($ndLi[0]);
 
             // 在删除todoItem时删除其绑定删除事件和改变样式事件
-            EventUtil.removeHandler($ndTodoDelete, 'click', deleteTodoItem);
-            EventUtil.removeHandler($ndTodoCheckbox, 'click', changeStyle);
+            // $ndLi.unbind();
 
-            var todoItemId = encodeURIComponent(target.parentNode.parentNode.id);
-
+            var todoItemId = encodeURIComponent($ndLi.attr('id'));
+            todoItemId = todoItemId.replace('todo', '');
+            console.log(todoItemId);
             $.get('/cakephp-2.3.7/todos/delete/' + todoItemId, null, function(response) {
                 if (response.status == true) {
-                    target.parentNode.parentNode.parentNode.removeChild(target.parentNode.parentNode);
+                    // console.log('remove');
+                    $ndLi.remove();
                 }
 
                 todo.update();
                 todo.setFooterDisplay();
                 todo.setClearButtonDisplay();
-            });     
+            });
         }
     },
 
     todo.editTodoItem = function(element) {
 
-        // 在编辑时将显示元素替换成输入框
-        var ndEditInput = element.parentNode.nextSibling;
-        ndEditInput.value = element.innerText;
-        element.parentNode.style.display = 'none';
-        ndEditInput.style.display = 'block';
-        ndEditInput.focus();
+        // console.log(element[0]);
+        var $inputElement = element.parent('div').next();
+
+        if (element[0].tagName.toLowerCase() == 'span') {
+            console.log(element[0].tagName.toLowerCase());
+
+            var displayValue = element.text();
+            
+            // 在编辑时将显示元素替换成输入框
+            element.parent('div').hide()
+                        .next()
+                        .val(displayValue)
+                        .show()
+                        .focus();
+        }
+
 
         function changeText() {
             // 将编辑输入框的文本显示出来
-            element.innerText = ndEditInput.value;
-            element.parentNode.style.display = 'block';
-            ndEditInput.style.display = 'none';
+            // var inputValue = element.parent('div').next().val();
 
-            var todoItemId = encodeURIComponent(element.parentNode.parentNode.id);
-            todo.request('/cakephp-2.3.7/todos/edit/' + todoItemId, 'post', 'data[content]=' + ndEditInput.value, function(response) {});
+            // console.log(inputValue);
+
+            element.text($inputElement.val())
+                    .parent('div').show()
+                    .next()
+                    .hide();
+
+            var todoItemId = encodeURIComponent(element.parents('li').attr('id'));
+            // console.log(todoItemId);
+            // console.log($inputElement.val());
+            $.post('/cakephp-2.3.7/todos/edit/' + todoItemId, 'data[content]=' + $inputElement.val(), function(response) {});
         }
 
-        EventUtil.addHandler(ndEditInput, 'blur', function(event) {
-            event = EventUtil.getEvent(event);
-            var target = EventUtil.getTarget(event);
-
+        $inputElement.blur(function(event) {
             changeText();
-        });
-
-        EventUtil.addHandler(ndEditInput, 'keydown', function(event) {
-            event = EventUtil.getEvent(event);
-            var target = EventUtil.getTarget(event);
-
+        }).keydown(function(event) {
             if (event.keyCode == 13) {
-               changeText();
+                changeText();
             }
         });
     },
@@ -226,27 +207,26 @@ $(function() {
     todo.clearAllComplete = function() {
 
         // 清空所有已完成项目
-        EventUtil.addHandler(todo.ndTodoClearComplete, 'click', function(event) {
-            event = EventUtil.getEvent(event);
-            var target = EventUtil.getTarget(event);
+        todo.ndTodoClearComplete.click(function(event) {
+            var $todoLists = todo.ndTodoList.find('li input:checked').parents('li');
 
-            var todoLists = document.getElementsByTagName('li');
-
-            for (var i=0; i<todoLists.length; i++) {
-                if (todoLists[i].querySelector('input[type=checkbox]').checked) {
-                    todo.request('/cakephp-2.3.7/todos/delete/' + todoLists[i].id, 'get', null, (function(element) {
+            // console.log($todoLists);
+            // console.log($todoLists.length);
+            // console.log($todoLists[0].id);
+            for (var i=0; i<$todoLists.length; i++) {
+                $.get('/cakephp-2.3.7/todos/delete/' + $todoLists[i].id, null, (function(element) {
                         return function(response) {
                             if (response.status == true) {
                                 // console.log(element);
-                                element.parentNode.removeChild(element);
+                                element.remove();
 
                                 todo.update();
                                 todo.setClearButtonDisplay();
                                 todo.setFooterDisplay();
                             }
                         };
-                    })(todoLists[i]));
-                }
+                    })($todoLists[i])
+                );
             }
         });
     },
@@ -254,40 +234,25 @@ $(function() {
     todo.selectAll = function() {
 
         // 给全选按钮添加事件
-        EventUtil.addHandler(todo.ndTodoSelectAll, 'click', function(event) {
-            event = EventUtil.getEvent(event);
-            var target = EventUtil.getTarget(event);
+        todo.ndTodoSelectAll.click(function(event) {
+            var $target = $(event.target);
 
-            var completed = target.checked ? 1 : 0;
+            var $todoLists = todo.ndTodoList.find('li');
+            var completed = $target.prop('checked') ? 1 : 0;
 
-            if (completed) {
-                for (var i=0; i<todo.ndTodoList.childNodes.length; i++) {
-                    if (todo.ndTodoList.childNodes[i].querySelector('input[type=checkbox]').checked == false) {
-                        todo.request('/cakephp-2.3.7/todos/complete/' + todo.ndTodoList.childNodes[i].id + '/' + completed, 'get', null, (function(element) {
-                            return function(response) {
-                                if (response.status == true) {
-                                    element.querySelector('input[type=checkbox]').checked = true;
-                                    element.querySelector('span').setAttribute('class', 'todo__item__complete');
-                                }
-                                todo.update();
-                                todo.setClearButtonDisplay();
-                            } 
-                        })(todo.ndTodoList.childNodes[i]));
+            for (var i=0; i<$todoLists.length; i++) {
+                $.get('/cakephp-2.3.7/todos/complete/' + $todoLists[i].id + '/' + completed, null, (function(element) {
+                    return function(response) {
+                        if (response.status == true) {
+                            $(element).find('input[type=checkbox]')
+                                    .prop('checked', completed)
+                                    .next()
+                                    .toggleClass('todo__item__complete');
+                        }
+                        todo.update();
+                        todo.setClearButtonDisplay();
                     }
-                }
-            } else {
-                for (var i=0; i<todo.ndTodoList.childNodes.length; i++) {
-                    todo.request('/cakephp-2.3.7/todos/complete/' + todo.ndTodoList.childNodes[i].id + '/' + completed, 'get', null, (function(element) {
-                        return function(response) {
-                            if (response.status == true) {
-                                element.querySelector('input[type=checkbox]').checked = false;
-                                element.querySelector('span').setAttribute('class', 'todo__item__content');
-                            }
-                            todo.update();
-                            todo.setClearButtonDisplay();
-                        } 
-                    })(todo.ndTodoList.childNodes[i]));
-                }
+                })($todoLists[i]));
             }
         });
     },
@@ -296,11 +261,11 @@ $(function() {
     todo.setFooterDisplay = function() {
         var $lis = todo.ndTodoList.find('li');
         if ($lis.length == 0) {
-            todo.ndFooter[0].style.display = 'none';
-            todo.ndTodoSelectAll[0].style.display = 'none';
+            todo.ndFooter.hide();
+            todo.ndTodoSelectAll.hide();
         } else {
-            todo.ndFooter[0].style.display = 'block';
-            todo.ndTodoSelectAll[0].style.display = 'block';
+            todo.ndFooter.show();
+            todo.ndTodoSelectAll.show();
         }
     },
 
@@ -318,9 +283,9 @@ $(function() {
         }
 
         if (hasCompletedTodo) {
-            todo.ndTodoClearComplete[0].style.display = 'block';
+            todo.ndTodoClearComplete.show();
         } else {
-            todo.ndTodoClearComplete[0].style.display = 'none';
+            todo.ndTodoClearComplete.hide();
         }
     },
 
@@ -349,9 +314,11 @@ $(function() {
         }
 
         if (isAllChecked == true) {
-            todo.ndTodoSelectAll.find('input[type=checkbox]').attr('checked', true);
+            todo.ndTodoSelectAll.find('input[type=checkbox]')
+                                .prop('checked', true);
         } else {
-            todo.ndTodoSelectAll.find('input[type=checkbox]').attr('checked', true);
+            todo.ndTodoSelectAll.find('input[type=checkbox]')
+                                .prop('checked', false);
         }
     }
 
