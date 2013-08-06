@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>使用对象</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	function printCard() {
+		var line1 = 'name: ' + this.name + '<br />';
+		var line2 = 'address: ' + this.address + '<br />';
+		var line3 = 'work phone: ' + this.workphone + '<br />';
+		var line4 = 'home phone: ' + this.homephone + '<br />';
+		document.write(line1 + line2 + line3 + line4);
+	}
+
+	function card(name, address, workphone, homephone) {
+		this.name = name;
+		this.address = address;
+		this.workphone = workphone;
+		this.homephone = homephone;
+		this.printCard = printCard;
+	}
+
+	one = new card('zhangsan', 'beijing', '110', '100');
+	two = new card('lisi', 'shanghai', '120', '122');
+	three = new card('wangwu', 'tianjing', '140', '144');
+
+	one.printCard();
+	two.printCard();
+	three.printCard();
+
+	function addHead(level) {
+		html = 'h' + level;
+		text = this.toString();
+		start = '<' + html + '>';
+		stop = '<' + html + '/>';
+		return start + text + stop;
+	}
+
+	String.prototype.heading = addHead;
+	document.write('1'.heading(1));
+	document.write('2'.heading(2));
+	document.write('3'.heading(3));
+</script>
+</head>
+<body>
+    
+</body>
+</html>

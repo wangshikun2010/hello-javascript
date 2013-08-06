@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>字符串排序</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	var newScores = [];
+	var letterArray = [];
+	var numberArray = [];
+	var sort_string;
+	var add_string;
+	var displayMessage_id;
+
+	window.onload = function() {
+		sort_string = document.getElementById('sort_string');
+		add_string = document.getElementById('add_string');
+		displayMessage_id = document.getElementById('displayMessage');
+
+		add_string.onclick = function() {
+			judgeSortOrder();
+			document.sort.input_string.value = '';
+		}
+	}
+
+	/**
+	 * 显示信息
+	 */
+	function message(string) {
+		displayMessage_id.value = '';
+		for (var i=0; i<string.length; i++) {
+			displayMessage_id.value += string[i] + '\n';
+		}
+	}
+
+	/**
+	 * 判断是顺序还是逆序
+	 */
+	function judgeSortOrder() {
+		var select_value = sort_string.options[sort_string.selectedIndex].text;
+		switch(select_value) {
+			case '顺序':
+				order();
+				break;
+			case '倒序':
+				reverseOrder();
+				break;
+		}
+	}
+
+	/**
+	 * 顺序
+	 */
+	function order() {
+		Classification();
+		newScores = numberArray.concat(letterArray);
+		message(newScores);
+ 	}
+
+ 	/**
+ 	 * 逆序
+ 	 */
+	function reverseOrder() {
+		Classification();
+		newScores = letterArray.concat(numberArray);
+		message(newScores.reverse());
+	}
+
+	/**
+	 * 数字排序
+	 */
+	function sortNumber(a,b) {
+		return a - b;
+	}
+
+	/*
+	 * 将输入的内容进行分类
+	 */
+	function Classification() {
+		var text = document.sort.input_string.value;
+		var numberString = /^[-0-9]/;
+		var letterString = /^[a-zA-z]/;
+
+		if (text == '') {
+			alert('请输入内容!');
+		} else {
+			if (numberString.test(text) == true) {
+				numberArray.push(text);
+				numberArray = numberArray.sort(sortNumber);
+			}
+			if (letterString.test(text) == true) {
+				letterArray.push(text);
+				letterArray = letterArray.sort();
+			}
+		}
+	}
+
+</script>
+</head>
+<body>
+	<p>字符串排序</p>
+	<form action="" name="sort">
+		<input type="text" name="input_string" id="input_string">
+		<input type="button" name="add_string" id="add_string" value="add">
+		<select name="sort_string" id="sort_string">
+			<option value="顺序" >顺序</option>
+			<option value="倒序">倒序</option>
+		</select>
+	</form>
+	<textarea id="displayMessage" cols="60" rows="10"></textarea>
+</body>
+</html>

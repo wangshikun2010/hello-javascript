@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>显示文档信息</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link href="" rel="stylesheet">
+<script type="text/javascript">
+	function removeChildren(parentnode) {
+		var childs = parentnode.childNodes;
+		for (var i=childs.length-1; i>=0; i--) {
+			parentnode.removeChild(childs[i]);
+		}
+	}
+
+	function message(s) {
+		var displayMessage_id = document.getElementById('displayMessage');
+		removeChildren(displayMessage_id);
+		var p = document.createElement('p');
+		p.innerHTML = s;	
+		displayMessage_id.appendChild(p);
+	}
+
+	function display_Message() {
+		var select_value = document.getElementById('display').options[document.getElementById('display').selectedIndex].value;
+		switch(select_value) {
+			case '文档地址':
+			message(document.URL);
+			break;
+			case '文档标题':
+			message(document.title);
+			break;
+			case '文档最后修改日期':
+			message(document.lastModified);
+			break;
+			case '文档背景颜色':
+			message(document.bgColor);
+			break;
+			case '文档字体颜色':
+			message(document.fgColor);
+			break;
+			case '文档链接颜色':
+			message(document.linkColor);
+			break;
+			case '文档链接数量':
+			message(document.links.length);
+			break;
+			case '文档a标签数量':
+			message(document.anchors.length);
+			break;
+		}
+	}
+
+	window.onload = function() {
+		document.getElementById('display').onchange = function() {
+			display_Message();
+		}
+	}
+</script>
+</head>
+<body>
+	<a href="http://baike.baidu.com/view/409486.htm"></a>
+	<p>获取文档信息</p>
+	<form action="" name="dis">
+		<select name="display" id="display">
+			<option value="文档地址" selected="selected">文档地址</option>
+			<option value="文档标题">文档标题</option>
+			<option value="文档最后修改日期">文档最后修改日期</option>
+			<option value="文档背景颜色">文档背景颜色</option>
+			<option value="文档字体颜色">文档字体颜色</option>
+			<option value="文档链接颜色">文档链接颜色</option>
+			<option value="文档链接数量">文档链接数量</option>
+			<option value="文档a标签数量">文档a标签数量</option>
+		</select>
+	</form>
+	<div id="displayMessage"></div>
+</body>
+</html>
